@@ -1,0 +1,22 @@
+{
+  "social_media": [
+
+    {
+      "icon": "fab, instagram",
+      "link": "https://www.instagram.com/hz_luan",
+      "name": "Instagram"
+    },
+    {
+      "icon": "fab, github",
+      "link": "https://www.github.com/hzluan",
+      "name": "Github"
+    },
+    {
+      "icon": "fab, linkedin",
+      "link": "https://www.linkedin.com/in/hongzhou-luan/",
+      "name": "LinkedIn"
+    }
+
+  ],
+  "text": "Copyright \u00a9 2023 Hongzhou Luan All Rights Reserved. <br /> Created by Hongzhou Luan, with many thanks to Xuan (Tom) Zhao"
+}
