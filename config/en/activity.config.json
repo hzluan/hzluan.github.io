@@ -8,15 +8,11 @@
             "padding": 0
         },
         {
-            "title": "Completed as a MEng graduate @ Imperial College London Department of Computing",
-            "time": "June 2023, after 4 Years of endeavor at South Kensington",
-            "description": "After studying for 4 years at Imperial College London, I will be graduating as a Master of Engineering student from the Department of Computing. This is probably my most difficult yet proudest personal achievement so far. I would like to thank all the peers, friends, and family who supported me throughout this jouney. Most importantly, Peter Zhang who is my life-long partner and best guide I simply cannot find anywhere else.",
-            "image": "imperial-logo.jpeg",
-            "padding": 0,
-            "link": {
-                "text": "Link to project repo and report",
-                "link": "https://github.com/zhao-xuan/Imperial-Individual-Project"
-            }
+            "title": "MEng Engineering Science @ Univerity of Oxford",
+            "time": "July 2022",
+            "description": "Machine Learning & Biomedical Engineering",
+            "image": "oxford-logo.png",
+            "padding": 0
         },
         {
             "title": "Publication @ MIDL 2023",
