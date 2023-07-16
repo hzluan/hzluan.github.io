@@ -2,15 +2,10 @@
     "display_number": 4,
     "items": [
         {
-            "title": "Incoming Full-time Software Engineer @ Microsoft Azure for Operators",
-            "time": "October 2023, my first full-time job after college graduation",
-            "description": "I will be joining the Azure for Operators team at Microsoft based in Enfield, London. Originally being the Metaswitch Company, the office/company was bought by Microsoft in 2020 and has now become part of the Azure Cloud Computing group within Microsoft.",
-            "image": "microsoft.jpg",
-            "padding": 0,
-            "link": {
-                "text": "See my post on how I landed on Microsoft + my third year application process (in Mandarin)",
-                "link": "https://blog.tomzhao.me/?p=1596&lang=zh"
-            }
+            "title": "Incoming PhD @ UC Berkeley + UCSF",
+            "time": "August 2023",
+            "image": "UCBplusUCSF.png",
+            "padding": 0
         },
         {
             "title": "Completed as a MEng graduate @ Imperial College London Department of Computing",

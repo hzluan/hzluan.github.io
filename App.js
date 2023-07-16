@@ -15,9 +15,9 @@ import { fab } from '@fortawesome/free-brands-svg-icons';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { LanguageContextProvider } from './components/Common/LanguageProvider';
 
-export const imgBaseUrl = "https://github.com/hzluan/hzluan.github.io/image/";
+export const imgBaseUrl = "https://hzluan.github.io/upload/";
 
-axios.defaults.baseURL = "https://github.com/hzluan/hzluan.github.io/";
+axios.defaults.baseURL = "https://hzluan.github.io/";
 library.add(far, fab, fas);
 
 function MyHomepage() {
