@@ -1,15 +1,27 @@
 {
     "covers": [
         {
-            "filter": "us",
-            "image": "album-cover-5.jpeg",
-            "location": "Atlanta, Georgia, U.S.",
+            "filter": "cn",
+            "image": "xiangshan.jpg",
+            "location": "Xiangshan, Beijing, China",
             "position": "col-lg-2 col-md-6",
-            "title": "Atlanta",
+            "title": "Xiangshan",
             "description": "",
             "link": "",
-            "id": "atlanta"
+            "id": "xiangshan"
+        },
+        {
+            "filter": "uk",
+            "image": "2021christmas.jpg",
+            "location": "Oxford, UK",
+            "position": "col-lg-2 col-md-6",
+            "title": "Christmas dinner",
+            "description": "",
+            "link": "",
+            "id": "21christmas"
         }
+
+
     ],
     "tags": [
         {
