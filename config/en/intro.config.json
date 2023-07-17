@@ -2,7 +2,7 @@
     "intro_images": [
         {
             "path": "bg.jpeg",
-            "color": "rgb(138, 198, 221)"
+            "color": "rgb(255, 231, 204)"
         }
     ],
     "subtitle": "PhD Student at UC Berkeley + UCSF Computational Precision Health Joint Program\nMEng Engineering Science 22'  🎓 @ University of Oxford \nTravel | Photography | Tech | Music & Movies",
@@ -10,11 +10,11 @@
     "links": [
         {
             "icon": "file",
-            "html": "&nbsp;Resume: <a class='highlight' href=''>As a Professional</a> | <a class='highlight' href=''>As a Human</a>"
+            "html": "&nbsp;Resume: <a class='highlight' href='Hongzhou_Luan_cv.pdf'>As a Professional</a> | <a class='highlight' href=''>As a Human</a>"
         },
         {
             "icon": "blog",
-            "html": "Blog: <a class='highlight' href='http://blog.tomzhao.me/?page_id=63'>Study Blog</a> | <a class='highlight' href='http://blog.tomzhao.me/?page_id=60'>Life Blog</a>"
+            "html": "Blog: <a class='highlight' href=''>Study Blog</a> | <a class='highlight' href=''>Life Blog</a>"
         },
         {
             "icon": "music",
