@@ -3,7 +3,7 @@
         {
             "filter": "cn",
             "image": "xiangshan.jpg",
-            "location": "Xiangshan, Beijing, China",
+            "location": "Beijing, 2023",
             "position": "col-lg-4 col-md-6",
             "title": "Xiangshan",
             "description": "",
@@ -13,13 +13,44 @@
         {
             "filter": "uk",
             "image": "2021christmas.jpg",
-            "location": "Oxford, UK",
+            "location": "Oxford, 2021",
             "position": "col-lg-4 col-md-6",
             "title": "Christmas dinner",
             "description": "",
             "link": "",
             "id": "21christmas"
+        },
+        {
+            "filter": "uk",
+            "image": "3YP.jpg",
+            "location": "Microsoft Teams, 2021",
+            "position": "col-lg-4 col-md-6",
+            "title": "3YP Presentation",
+            "description": "",
+            "link": "",
+            "id": "3YP"
+        },
+        {
+            "filter": "uk",
+            "image": "owensgradaution",
+            "location": "Oxford, 2020",
+            "position": "col-lg-4 col-md-6",
+            "title": "Attending Owen's Graduaiton",
+            "description": "",
+            "link": "",
+            "id": "owen_graduation"
+        },
+        {
+            "filter": "uk",
+            "image": "halfway_hall.jpg",
+            "location": "Oxford, 2020",
+            "position": "col-lg-4 col-md-6",
+            "title": "Halfway Hall",
+            "description": "",
+            "link": "",
+            "id": "halfway_hall"
         }
+   
 
 
     ],
@@ -33,12 +64,8 @@
             "name": "🇺🇸U.S."
         },
         {
-            "label": ".london",
-            "name": "🎡London"
-        },
-        {
             "label": ".uk",
-            "name": "🇬🇧U.K & 🇮🇪Ireland"
+            "name": "🇬🇧U.K"
         },
         {
             "label": ".cn",
@@ -49,8 +76,8 @@
             "name": "🇪🇺Europe"
         },
         {
-            "label": ".live",
-            "name": "🎵Live Concert"
+            "label": ".art",
+            "name": "👩🏻‍🎨Art"
         }
     ],
     "title": "My Photo Gallery",
