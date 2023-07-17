@@ -14,18 +14,18 @@
             "image": "oxford-logo.png",
             "padding": 0
         },
-        {
-            "title": "Publication @ MIDL 2023",
-            "time": "April 2023, first author of a short paper",
-            "description": "Publication of my short paper: High-Fidelity Image Synthesis from Pulmonary Nodule Lesion Maps using Semantic Diffusion Model. Successfully made to the Medical Imaging with Deep Learning 2023 Conference. This short paper is also Part I of my final year individual project at Imperial.",
-            "image": "midl2023-logo.png",
-            "padding": 0,
-            "link": {
-                "text": "Link to arxiv",
-                "link": "https://arxiv.org/abs/2305.01138"
+            {
+                "title": "Publication @ MIDL 2023",
+                "time": "April 2023, first author of a short paper",
+                "description": "Publication of my short paper: High-Fidelity Image Synthesis from Pulmonary Nodule Lesion Maps using Semantic Diffusion Model. Successfully made to the Medical Imaging with Deep Learning 2023 Conference. This short paper is also Part I of my final year individual project at Imperial.",
+                "image": "midl2023-logo.png",
+                "padding": 0,
+                "link": {
+                    "text": "Link to arxiv",
+                    "link": "https://arxiv.org/abs/2305.01138"
+                }
             }
-        }
-        
+            
     ],
     "title": "Recent Projects/Updates"
 }
