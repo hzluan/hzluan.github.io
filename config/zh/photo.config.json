@@ -3,9 +3,9 @@
         {
             "filter": "uk",
             "image": "graduation.jpg",
-            "location": "Oxford, 2023",
+            "location": "牛津, 2023",
             "position": "col-lg-3 col-md-6",
-            "title": "Graduation",
+            "title": "毕业",
             "description": "",
             "link": "",
             "id": "graduation"
@@ -13,7 +13,7 @@
         {
             "filter": "cn",
             "image": "xiangshan.jpg",
-            "location": "北京香山",
+            "location": "北京, 2023",
             "position": "col-lg-4 col-md-6",
             "title": "香山",
             "description": "",
@@ -23,12 +23,42 @@
         {
             "filter": "uk",
             "image": "2021christmas.jpg",
-            "location": "英国牛津",
+            "location": "牛津, 2021",
             "position": "col-lg-4 col-md-6",
             "title": "圣诞节聚会",
             "description": "",
             "link": "",
             "id": "21christmas"
+        },
+        {
+            "filter": "uk",
+            "image": "3YP.jpg",
+            "location": "Microsoft Teams, 2021",
+            "position": "col-lg-4 col-md-6",
+            "title": "3YP Presentation",
+            "description": "",
+            "link": "",
+            "id": "3YP"
+        },
+        {
+            "filter": "uk",
+            "image": "owensgraduation.jpg",
+            "location": "牛津, 2020",
+            "position": "col-lg-4 col-md-6",
+            "title": "Owen毕业",
+            "description": "",
+            "link": "",
+            "id": "owen_graduation"
+        },
+        {
+            "filter": "uk",
+            "image": "halfway_hall.jpg",
+            "location": "牛津, 2020",
+            "position": "col-lg-6 col-md-6",
+            "title": "Halfway Hall",
+            "description": "",
+            "link": "",
+            "id": "halfway_hall"
         }
     ],
     "tags": [
