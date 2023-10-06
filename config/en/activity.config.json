@@ -2,10 +2,15 @@
     "display_number": 4,
     "items": [
         {
-            "title": "Incoming PhD @ UC Berkeley + UCSF",
+            "title": "PhD Student @ UC Berkeley + UCSF",
             "time": "August 2023",
+            "description": "Rotation Advisor: Prof. Adam Yala",
             "image": "UCBplusUCSF.png",
-            "padding": 0
+            "padding": 0,
+            "link": {
+                "text": "Program Website",
+                "link": "hhttps://computationalhealth.berkeley.edu/"
+            }
         },
         {
             "title": "MEng Engineering Science @ Univerity of Oxford",
