@@ -40,7 +40,7 @@
         
         .intro-right {
             width: 40%;
-            background-image: url('/upload/Hongzhou_bg.jpg');
+            background-image: url('/upload/Hongzhou_bg.jpg') !important;
             background-size: cover !important;
             background-position: center !important;
             position: relative;
@@ -48,10 +48,11 @@
             -webkit-filter: none !important;
         }
         
-        /* GitHub Pages specific style - Use absolute URL instead of relative */
+        /* GitHub Pages specific style */
         @media (min-width: 1px) {
+            /* This media query will always match, but CSS comes after the default rule above */
             .intro-right-gh-pages {
-                background-image: url('https://hzluan.github.io/upload/Hongzhou_bg.jpg') !important;
+                background-image: url('/hzluan.github.io/upload/Hongzhou_bg.jpg') !important;
             }
         }
         
@@ -301,7 +302,7 @@
         const style = document.createElement('style');
         style.textContent = `
           .intro-right {
-            background-image: url('https://hzluan.github.io/upload/Hongzhou_bg.jpg') !important;
+            background-image: url('/hzluan.github.io/upload/Hongzhou_bg.jpg') !important;
           }
         `;
         document.head.appendChild(style);
@@ -331,50 +332,16 @@
           // Add GitHub Pages specific class
           introRight.classList.add('intro-right-gh-pages');
           
-          // Also apply the style directly as a backup using both protocols
-          introRight.style.backgroundImage = 'url("https://hzluan.github.io/upload/Hongzhou_bg.jpg")';
+          // Also apply the style directly as a backup
+          introRight.style.backgroundImage = 'url("/hzluan.github.io/upload/Hongzhou_bg.jpg")';
           
           // Force a repaint
           introRight.style.display = 'none';
           setTimeout(() => {
-            // Add inline style attribute as a final backup
-            introRight.setAttribute('style', 
-              'width: 40%; ' +
-              'background-image: url("https://hzluan.github.io/upload/Hongzhou_bg.jpg") !important; ' +
-              'background-size: cover !important; ' +
-              'background-position: center !important; ' +
-              'position: relative; ' +
-              'filter: none !important; ' +
-              '-webkit-filter: none !important;'
-            );
-            
-            console.log('Applied direct style attribute with absolute URL');
+            introRight.style.display = '';
           }, 10);
           
           console.log('Updated intro-right background for GitHub Pages');
-          
-          // Last resort: create a direct img element
-          setTimeout(() => {
-            if (getComputedStyle(introRight).backgroundImage === 'none' || 
-                getComputedStyle(introRight).backgroundImage === '') {
-              console.log('Background still not showing, creating fallback image element');
-              
-              // Clear the container first
-              introRight.innerHTML = '';
-              
-              const img = document.createElement('img');
-              img.src = 'https://hzluan.github.io/upload/Hongzhou_bg.jpg';
-              img.alt = 'Hongzhou Luan';
-              img.style.position = 'absolute';
-              img.style.top = '0';
-              img.style.left = '0';
-              img.style.width = '100%';
-              img.style.height = '100%';
-              img.style.objectFit = 'cover';
-              
-              introRight.appendChild(img);
-            }
-          }, 500);
         }
       }
       
@@ -408,19 +375,8 @@
         // Add GitHub Pages prefix if on GitHub Pages
         if (isGitHubPages) {
           paths.forEach(p => {
-            if (!p.startsWith('/hzluan.github.io/') && !p.startsWith('http')) {
+            if (!p.startsWith('/hzluan.github.io/')) {
               paths.push('/hzluan.github.io' + (p.startsWith('/') ? p : '/' + p));
-            }
-          });
-          
-          // Also add absolute URLs as GitHub Pages sometimes requires them
-          const pathsCopy = [...paths];
-          pathsCopy.forEach(p => {
-            if (!p.startsWith('http')) {
-              const cleanPath = p.startsWith('/') ? p.substring(1) : p;
-              // Remove duplicate hzluan.github.io in path if present
-              const finalPath = cleanPath.replace(/^hzluan\.github\.io\//, '');
-              paths.push('https://hzluan.github.io/' + finalPath);
             }
           });
         }
