@@ -41,6 +41,12 @@
             background-image: url('/upload/Hongzhou_bg.jpg');
             background-size: cover;
             background-position: center;
+            position: relative;
+        }
+        
+        /* Remove any overlay from the right column */
+        .intro-right::before {
+            display: none !important;
         }
         
         /* Content styling */
@@ -49,10 +55,27 @@
             z-index: 10;
         }
         
+        /* Preserve the original highlight color */
+        .highlight {
+            color: rgb(255, 231, 204) !important;
+        }
+        
         .intro-section h2, 
         .intro-section h3 {
             text-align: left !important;
             padding-left: 20px !important;
+        }
+        
+        /* Social media links alignment */
+        .social-links {
+            display: flex !important;
+            justify-content: flex-start !important;
+            padding-left: 20px !important;
+            margin-top: 15px !important;
+        }
+        
+        .social-links a {
+            margin-right: 15px !important;
         }
         
         /* Particles container */
