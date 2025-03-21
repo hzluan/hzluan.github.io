@@ -166,10 +166,10 @@
         }
         
         .pub-image-container {
-            align-self: flex-end;
-            margin-left: 20px;
-            margin-bottom: 15px;
-            width: 120px;
+            align-self: center;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            width: 200px;
             height: auto;
         }
         
@@ -626,19 +626,6 @@
             const pubItem = document.createElement('div');
             pubItem.className = 'publication-item';
             
-            // Add image if available
-            if (pub.image) {
-              const imageContainer = document.createElement('div');
-              imageContainer.className = 'pub-image-container';
-              
-              const img = document.createElement('img');
-              img.src = pub.image;
-              img.alt = pub.title;
-              
-              imageContainer.appendChild(img);
-              pubItem.appendChild(imageContainer);
-            }
-            
             const pubTitle = document.createElement('h3');
             pubTitle.className = 'pub-title';
             pubTitle.textContent = pub.title;
@@ -654,6 +641,19 @@
             pubItem.appendChild(pubTitle);
             pubItem.appendChild(pubAuthors);
             pubItem.appendChild(pubVenue);
+            
+            // Add image if available - now after the text
+            if (pub.image) {
+              const imageContainer = document.createElement('div');
+              imageContainer.className = 'pub-image-container';
+              
+              const img = document.createElement('img');
+              img.src = pub.image;
+              img.alt = pub.title;
+              
+              imageContainer.appendChild(img);
+              pubItem.appendChild(imageContainer);
+            }
             
             // Append the publication item to the wrapper
             pubWrapper.appendChild(pubItem);
