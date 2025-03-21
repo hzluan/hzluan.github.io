@@ -155,12 +155,29 @@
             border-radius: 5px;
             background-color: rgba(255, 255, 255, 0.95);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
         }
         
         .publication-item:hover {
             background-color: #f2f2f2;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
             transform: translateY(-2px);
+        }
+        
+        .pub-image-container {
+            align-self: flex-end;
+            margin-left: 20px;
+            margin-bottom: 15px;
+            width: 120px;
+            height: auto;
+        }
+        
+        .pub-image-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         
         .pub-title {
@@ -591,8 +608,14 @@
           publications.forEach(pub => {
             // Create clickable container wrapper
             const pubWrapper = document.createElement('a');
-            // Check all possible link fields in the publication object
-            pubWrapper.href = pub.link || pub.paper || pub.url || pub.pdf || pub.code || '#';
+            // Check for links structure or direct link
+            let linkUrl = '#';
+            if (pub.links && pub.links.paper) {
+              linkUrl = pub.links.paper;
+            } else if (pub.link || pub.paper || pub.url || pub.pdf || pub.code) {
+              linkUrl = pub.link || pub.paper || pub.url || pub.pdf || pub.code;
+            }
+            pubWrapper.href = linkUrl;
             console.log('Publication link:', pub.title, '->', pubWrapper.href); // Debug log
             pubWrapper.style.textDecoration = 'none';
             pubWrapper.style.display = 'block';
@@ -600,6 +623,19 @@
             
             const pubItem = document.createElement('div');
             pubItem.className = 'publication-item';
+            
+            // Add image if available
+            if (pub.image) {
+              const imageContainer = document.createElement('div');
+              imageContainer.className = 'pub-image-container';
+              
+              const img = document.createElement('img');
+              img.src = pub.image;
+              img.alt = pub.title;
+              
+              imageContainer.appendChild(img);
+              pubItem.appendChild(imageContainer);
+            }
             
             const pubTitle = document.createElement('h3');
             pubTitle.className = 'pub-title';
