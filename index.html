@@ -240,23 +240,8 @@
       }
     });
 
-    // Function to fix all images, including CSS background images
+    // Function to fix gallery images
     function fixGalleryImages() {
-      // First, fix the background image for intro-right
-      const introRight = document.querySelector('.intro-right');
-      if (introRight) {
-        const isGitHubPages = window.location.hostname === 'hzluan.github.io';
-        if (isGitHubPages) {
-          // Update path for GitHub Pages
-          introRight.style.backgroundImage = 'url("/hzluan.github.io/upload/Hongzhou_bg.jpg")';
-          console.log('Updated intro-right background for GitHub Pages');
-        } else {
-          // Ensure path is correct for local development
-          introRight.style.backgroundImage = 'url("/upload/Hongzhou_bg.jpg")';
-          console.log('Updated intro-right background for local development');
-        }
-      }
-      
       // Find all images on the page, not just gallery
       const allImages = document.querySelectorAll('img');
       console.log('Found images:', allImages.length);
