@@ -240,161 +240,48 @@
       }
     });
 
-    // Function to fix gallery images
-    function fixGalleryImages() {
-      // Find all images on the page, not just gallery
-      const allImages = document.querySelectorAll('img');
-      console.log('Found images:', allImages.length);
-      
-      if (allImages.length === 0) return;
-      
-      const isGitHubPages = window.location.hostname === 'hzluan.github.io';
-      
-      // Fix each image
-      allImages.forEach(img => {
-        const src = img.getAttribute('src') || '';
-        
-        // Skip images that are already working
-        if (src.includes('oxford-logo') || src.includes('UCBplusUCSF.png')) {
-          return;
-        }
-        
-        // Try relative path
-        let paths = [src];
-        
-        // Try with and without leading slash
-        if (!src.startsWith('/') && !src.startsWith('http')) {
-          paths.push('/' + src);
-        } else if (src.startsWith('/')) {
-          paths.push(src.substring(1));
-        }
-        
-        // Add GitHub Pages prefix if on GitHub Pages
-        if (isGitHubPages) {
-          paths.forEach(p => {
-            if (!p.startsWith('/hzluan.github.io/')) {
-              paths.push('/hzluan.github.io' + (p.startsWith('/') ? p : '/' + p));
-            }
-          });
-        }
-        
-        // Try a different path for each attempt
-        tryNextPath(img, paths, 0);
-      });
-    }
-    
-    // Helper to try multiple paths
-    function tryNextPath(img, paths, index) {
-      if (index >= paths.length) return;
-      
-      const testImg = new Image();
-      testImg.onload = function() {
-        img.src = paths[index];
-      };
-      
-      testImg.onerror = function() {
-        tryNextPath(img, paths, index + 1);
-      };
-      
-      testImg.src = paths[index];
-    }
-    
     // Function to load publications
     function loadPublications() {
       const pubContainer = document.getElementById('publications-container');
-      if (!pubContainer) {
-        // If publications container doesn't exist, create it
-        const main = document.querySelector('main') || document.body;
-        const pubSection = document.createElement('section');
-        pubSection.className = 'publications-section';
-        pubSection.innerHTML = `
-          <div class="container">
-            <div class="section-title">
-              <h2>Publications</h2>
-            </div>
-            <div id="publications-container"></div>
-          </div>
-        `;
-        main.appendChild(pubSection);
-        
-        // Get the newly created container
-        const newPubContainer = document.getElementById('publications-container');
-        if (!newPubContainer) return;
-        
-        newPubContainer.innerHTML = '<div class="loading">Loading publications...</div>';
-        fetchPublications(newPubContainer);
-      } else {
-        pubContainer.innerHTML = '<div class="loading">Loading publications...</div>';
-        fetchPublications(pubContainer);
-      }
-    }
-    
-    // Function to fetch publications
-    function fetchPublications(container) {
-      // Use hardcoded publications data as fallback
-      const fallbackData = [
-        {
-          "title": "Enabling access to care through web-based clinician-patient interaction",
-          "authors": "Hongzhou Luan, Jesse Bettencourt, Adriel Saporta, Roxana Daneshjou",
-          "venue": "ML4H: Machine Learning for Health 2023",
-          "image": "/upload/paper_thumbnails/ML4H.png",
-          "url": "https://proceedings.mlr.press/v209/luan23a.html"
-        },
-        {
-          "title": "Learning Object Permanence from Video",
-          "authors": "Hongzhou Luan, Haozhi Qi, Matthew Trager, Yi-Ting Chen, Brandon Yang, Rose Kanjirathinkal, Yuanzhen Li, Noah Snavely",
-          "venue": "ECCV 2022",
-          "image": "/upload/paper_thumbnails/object_permanence.png",
-          "url": "https://arxiv.org/abs/2204.05386"
-        },
-        {
-          "title": "Deep Semantics-Aware Photo Adjustment",
-          "authors": "Luan, Hongzhou, et al.",
-          "venue": "International Conference on Computational Photography (ICCP) 2018",
-          "image": "/upload/paper_thumbnails/photoExpertNet.png",
-          "url": "https://arxiv.org/abs/1706.08260"
-        }
-      ];
+      if (!pubContainer) return;
       
-      // Try to load from file, fall back to hardcoded data
+      // Show loading indicator
+      pubContainer.innerHTML = '<div class="loading">Loading publications...</div>';
+      
+      // Determine the correct path based on environment
       const isGitHubPages = window.location.hostname === 'hzluan.github.io';
       const basePath = isGitHubPages ? '/hzluan.github.io' : '';
+      const configPath = `${basePath}/config/en/publications.config.json`;
       
-      let paths = [
-        `${basePath}/config/en/publications.config.json`,
-        `/config/en/publications.config.json`,
-        `config/en/publications.config.json`
-      ];
+      console.log('Loading publications from:', configPath);
       
-      let attemptCount = 0;
-      tryFetchPath();
-      
-      function tryFetchPath() {
-        if (attemptCount >= paths.length) {
-          console.warn('Could not load publications from file, using fallback data');
-          renderPublications(fallbackData, container);
-          return;
-        }
-        
-        fetch(paths[attemptCount])
-          .then(response => {
-            if (!response.ok) throw new Error('Failed to fetch');
-            return response.json();
-          })
-          .then(data => {
-            console.log('Publications loaded successfully');
-            renderPublications(data, container);
-          })
-          .catch(error => {
-            attemptCount++;
-            tryFetchPath();
-          });
-      }
+      // Fetch publication data
+      fetch(configPath)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('Publications loaded:', data.length, 'items');
+          renderPublications(data);
+        })
+        .catch(error => {
+          console.error('Error loading publications:', error.message);
+          pubContainer.innerHTML = `
+            <div class="error-message">
+              <p>Unable to load publications. Please try again later.</p>
+              <button onclick="loadPublications()">Retry</button>
+            </div>
+          `;
+        });
     }
     
     // Function to render publications
-    function renderPublications(publications, container) {
-      container.innerHTML = '';
+    function renderPublications(publications) {
+      const pubContainer = document.getElementById('publications-container');
+      pubContainer.innerHTML = '';
       
       // Sort publications by date (newest first)
       publications.sort((a, b) => {
@@ -411,7 +298,7 @@
         
         // Create title with link if available
         const title = document.createElement('h3');
-        title.className = 'pub-title';
+        title.className = 'publication-title';
         if (pub.url) {
           const titleLink = document.createElement('a');
           titleLink.href = pub.url;
@@ -426,7 +313,7 @@
         // Add authors
         if (pub.authors) {
           const authors = document.createElement('p');
-          authors.className = 'pub-authors';
+          authors.className = 'publication-authors';
           authors.textContent = pub.authors;
           pubItem.appendChild(authors);
         }
@@ -434,7 +321,7 @@
         // Add venue
         if (pub.venue) {
           const venue = document.createElement('p');
-          venue.className = 'pub-venue';
+          venue.className = 'publication-venue';
           venue.textContent = pub.venue;
           pubItem.appendChild(venue);
         }
@@ -442,48 +329,51 @@
         // Add image if available
         if (pub.image) {
           const imageContainer = document.createElement('div');
-          imageContainer.className = 'pub-image-container';
+          imageContainer.className = 'publication-image-container';
+          imageContainer.style.alignSelf = 'center';
+          imageContainer.style.marginTop = '15px';
+          imageContainer.style.marginBottom = '5px';
+          imageContainer.style.width = '300px';
+          imageContainer.style.maxWidth = '100%';
+          imageContainer.style.textAlign = 'center';
           
           const img = document.createElement('img');
+          
+          // Fix image path for GitHub Pages
           const isGitHubPages = window.location.hostname === 'hzluan.github.io';
           const basePath = isGitHubPages ? '/hzluan.github.io' : '';
-          
-          // Simple path handling
           let imgPath = pub.image;
+          
+          // Ensure path starts with slash
           if (!imgPath.startsWith('/') && !imgPath.startsWith('http')) {
             imgPath = '/' + imgPath;
           }
           
+          // Set image attributes
           img.src = isGitHubPages ? basePath + imgPath : imgPath;
-          img.alt = pub.title;
+          img.alt = pub.title || 'Publication image';
+          img.style.maxWidth = '100%';
+          img.style.height = 'auto';
+          img.style.display = 'block';
+          img.style.borderRadius = '4px';
+          img.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
           
-          // Handle errors
+          // Handle image loading errors
           img.onerror = function() {
-            // Try with alternative path
-            const altPath = '/upload/paper_thumbnails/' + imgPath.split('/').pop();
-            const altSrc = isGitHubPages ? basePath + altPath : altPath;
+            const fallback = document.createElement('div');
+            fallback.style.width = '100%';
+            fallback.style.height = '120px';
+            fallback.style.backgroundColor = '#0066cc';
+            fallback.style.color = 'white';
+            fallback.style.display = 'flex';
+            fallback.style.justifyContent = 'center';
+            fallback.style.alignItems = 'center';
+            fallback.style.borderRadius = '4px';
+            fallback.style.textAlign = 'center';
+            fallback.textContent = 'Publication';
             
-            // Try alternative
-            const testImg = new Image();
-            testImg.onload = function() {
-              img.src = altSrc;
-            };
-            testImg.onerror = function() {
-              // If still fails, show colored placeholder
-              img.style.display = 'none';
-              
-              const fallback = document.createElement('div');
-              fallback.style.width = '100%';
-              fallback.style.height = '120px';
-              fallback.style.backgroundColor = '#0066cc';
-              fallback.style.color = 'white';
-              fallback.style.display = 'flex';
-              fallback.style.justifyContent = 'center';
-              fallback.style.alignItems = 'center';
-              fallback.textContent = pub.venue || 'Publication';
-              imageContainer.appendChild(fallback);
-            };
-            testImg.src = altSrc;
+            imageContainer.innerHTML = '';
+            imageContainer.appendChild(fallback);
           };
           
           imageContainer.appendChild(img);
@@ -491,7 +381,46 @@
         }
         
         // Add to container
-        container.appendChild(pubItem);
+        pubContainer.appendChild(pubItem);
+      });
+    }
+    
+    // Function to fix gallery images
+    function fixGalleryImages() {
+      // Find all gallery images
+      const galleryImages = document.querySelectorAll('.gallery-item img, .gallery img, .photo-gallery img');
+      console.log('Found gallery images:', galleryImages.length);
+      
+      if (galleryImages.length === 0) return;
+      
+      const isGitHubPages = window.location.hostname === 'hzluan.github.io';
+      const basePath = isGitHubPages ? '/hzluan.github.io' : '';
+      
+      // Fix each image
+      galleryImages.forEach(img => {
+        const src = img.getAttribute('src');
+        if (!src) return;
+        
+        // Ensure path starts with slash
+        let fixedSrc = src;
+        if (!src.startsWith('/') && !src.startsWith('http')) {
+          fixedSrc = '/' + src;
+        }
+        
+        // Add GitHub Pages prefix if needed
+        if (isGitHubPages && !fixedSrc.startsWith('/hzluan.github.io/')) {
+          fixedSrc = basePath + fixedSrc;
+        }
+        
+        // Update image
+        img.src = fixedSrc;
+        
+        // Add error handling
+        img.onerror = function() {
+          console.error('Failed to load image:', fixedSrc);
+          img.style.border = '1px dashed red';
+          img.style.padding = '10px';
+        };
       });
     }
     
