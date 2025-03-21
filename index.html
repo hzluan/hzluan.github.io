@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
-    <meta name="description" content="Hongzhou Luan's personal website" />
-    <link rel="apple-touch-icon" href="/logo192.png" />
-    <link rel="manifest" href="/manifest.json" />
+    <meta charset="utf-8">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="#000000">
+    <meta name="description" content="Hongzhou Luan's personal website">
+    <link rel="apple-touch-icon" href="/logo192.png">
+    <link rel="manifest" href="/manifest.json">
     <title>Hongzhou Luan</title>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <link href="/static/css/main.3f09121e.chunk.css" rel="stylesheet">
@@ -586,14 +586,16 @@
         
         // Load publications from config file
         fetch('/config/en/publications.config.json')
-          .then(response => response.json())
-          .then(data => {
+          .then(function(response) {
+            return response.json();
+          })
+          .then(function(data) {
             // Use publications from config file
             const publications = data.publications || [];
-            console.log(`Loaded ${publications.length} publications from config`);
+            console.log('Loaded ' + publications.length + ' publications from config');
             renderPublications(publications);
           })
-          .catch(error => {
+          .catch(function(error) {
             console.error('Error loading publications.config.json:', error);
             // Display error message in console only
             pubContainer.innerHTML = '<p style="text-align: center; color: #000;">Unable to load publications.</p>';
@@ -605,7 +607,7 @@
           pubContainer.innerHTML = '';
           
           // Add publication items
-          publications.forEach(pub => {
+          publications.forEach(function(pub) {
             // Create clickable container wrapper
             const pubWrapper = document.createElement('a');
             // Check for links structure or direct link
@@ -704,7 +706,7 @@
       // Additional function to update any old links in the content
       const updateAllGalleryLinks = function() {
         // Update all links pointing to old references
-        document.querySelectorAll('a[href^="#"]').forEach(link => {
+        document.querySelectorAll('a[href^="#"]').forEach(function(link) {
           const href = link.getAttribute('href');
           if (href && href !== '#gallery' && 
               (href.includes('gall') || 
@@ -716,7 +718,7 @@
         
         // Update section ID if it exists using class-based targeting
         const portfolioSections = document.querySelectorAll('.portfolio-section');
-        portfolioSections.forEach(section => {
+        portfolioSections.forEach(function(section) {
           section.id = 'gallery';
         });
         
