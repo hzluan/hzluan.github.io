@@ -35,7 +35,7 @@
             justify-content: center;
             padding: 40px;
             box-sizing: border-box;
-            overflow: hidden; /* Keep particles contained */
+            overflow: hidden;
         }
         
         .intro-right {
@@ -55,12 +55,6 @@
         .intro-section::after,
         #particles-js,
         .overlay {
-            display: none !important;
-        }
-        
-        /* Additional fixes to ensure no overlay on the right side */
-        .intro-section::before {
-            content: none !important;
             display: none !important;
         }
         
@@ -146,17 +140,16 @@
         
         .publication-item {
             margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            position: relative;
-            cursor: pointer;
-            transition: all 0.3s;
             padding: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             border-radius: 5px;
             background-color: rgba(255, 255, 255, 0.95);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             display: flex;
             flex-direction: column;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
         }
         
         .publication-item:hover {
@@ -232,7 +225,7 @@
     <script>
     // Script to implement the split layout and fix navigation labels
     document.addEventListener('DOMContentLoaded', function() {
-      // Implement split layout
+      // Function to create the split layout for intro section
       const createSplitLayout = function() {
         const introSection = document.querySelector('.intro-section');
         
@@ -274,119 +267,65 @@
           // Initialize particles using particles.js
           try {
             if (window.particlesJS) {
-              // Only initialize if not already done
               window.particlesJS('particles-container', {
-                "particles": {
-                  "number": {
-                    "value": 80,
-                    "density": {
-                      "enable": true,
-                      "value_area": 800
-                    }
+                particles: {
+                  number: { value: 80, density: { enable: true, value_area: 800 } },
+                  color: { value: "#ffffff" },
+                  shape: {
+                    type: "circle",
+                    stroke: { width: 0, color: "#000000" },
+                    polygon: { nb_sides: 5 }
                   },
-                  "color": {
-                    "value": "#ffffff"
+                  opacity: {
+                    value: 0.5,
+                    random: false,
+                    anim: { enable: false, speed: 1, opacity_min: 0.1, sync: false }
                   },
-                  "shape": {
-                    "type": "circle",
-                    "stroke": {
-                      "width": 0,
-                      "color": "#000000"
-                    },
-                    "polygon": {
-                      "nb_sides": 5
-                    }
+                  size: {
+                    value: 3,
+                    random: true,
+                    anim: { enable: false, speed: 40, size_min: 0.1, sync: false }
                   },
-                  "opacity": {
-                    "value": 0.5,
-                    "random": false,
-                    "anim": {
-                      "enable": false,
-                      "speed": 1,
-                      "opacity_min": 0.1,
-                      "sync": false
-                    }
+                  line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#ffffff",
+                    opacity: 0.4,
+                    width: 1
                   },
-                  "size": {
-                    "value": 3,
-                    "random": true,
-                    "anim": {
-                      "enable": false,
-                      "speed": 40,
-                      "size_min": 0.1,
-                      "sync": false
-                    }
-                  },
-                  "line_linked": {
-                    "enable": true,
-                    "distance": 150,
-                    "color": "#ffffff",
-                    "opacity": 0.4,
-                    "width": 1
-                  },
-                  "move": {
-                    "enable": true,
-                    "speed": 6,
-                    "direction": "none",
-                    "random": false,
-                    "straight": false,
-                    "out_mode": "out",
-                    "bounce": false,
-                    "attract": {
-                      "enable": false,
-                      "rotateX": 600,
-                      "rotateY": 1200
-                    }
+                  move: {
+                    enable: true,
+                    speed: 6,
+                    direction: "none",
+                    random: false,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false,
+                    attract: { enable: false, rotateX: 600, rotateY: 1200 }
                   }
                 },
-                "interactivity": {
-                  "detect_on": "canvas",
-                  "events": {
-                    "onhover": {
-                      "enable": true,
-                      "mode": "repulse"
-                    },
-                    "onclick": {
-                      "enable": true,
-                      "mode": "push"
-                    },
-                    "resize": true
+                interactivity: {
+                  detect_on: "canvas",
+                  events: {
+                    onhover: { enable: true, mode: "repulse" },
+                    onclick: { enable: true, mode: "push" },
+                    resize: true
                   },
-                  "modes": {
-                    "grab": {
-                      "distance": 400,
-                      "line_linked": {
-                        "opacity": 1
-                      }
-                    },
-                    "bubble": {
-                      "distance": 400,
-                      "size": 40,
-                      "duration": 2,
-                      "opacity": 8,
-                      "speed": 3
-                    },
-                    "repulse": {
-                      "distance": 200,
-                      "duration": 0.4
-                    },
-                    "push": {
-                      "particles_nb": 4
-                    },
-                    "remove": {
-                      "particles_nb": 2
-                    }
+                  modes: {
+                    grab: { distance: 400, line_linked: { opacity: 1 } },
+                    bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 },
+                    repulse: { distance: 200, duration: 0.4 },
+                    push: { particles_nb: 4 },
+                    remove: { particles_nb: 2 }
                   }
                 },
-                "retina_detect": true
+                retina_detect: true
               });
             } else {
-              // Create our own particles effect if particles.js isn't available
               createBasicParticles(particlesContainer);
             }
           } catch (e) {
             console.error("Failed to initialize particles:", e);
-            // Fallback to a basic particles implementation
             createBasicParticles(particlesContainer);
           }
           
@@ -587,16 +526,14 @@
         
         // Load publications from config file
         fetch('/config/en/publications.config.json')
-          .then(function(response) {
-            return response.json();
-          })
-          .then(function(data) {
+          .then(response => response.json())
+          .then(data => {
             // Use publications from config file
             const publications = data.publications || [];
             console.log('Loaded ' + publications.length + ' publications from config');
             renderPublications(publications);
           })
-          .catch(function(error) {
+          .catch(error => {
             console.error('Error loading publications.config.json:', error);
             // Display error message in console only
             pubContainer.innerHTML = '<p style="text-align: center; color: #000;">Unable to load publications.</p>';
@@ -609,7 +546,7 @@
           pubContainer.innerHTML = '';
           
           // Add publication items
-          publications.forEach(function(pub) {
+          publications.forEach(pub => {
             // Create clickable container wrapper
             const pubWrapper = document.createElement('a');
             // Check for links structure or direct link
@@ -620,7 +557,6 @@
               linkUrl = pub.link || pub.paper || pub.url || pub.pdf || pub.code;
             }
             pubWrapper.href = linkUrl;
-            console.log('Publication link:', pub.title, '->', pubWrapper.href); // Debug log
             pubWrapper.style.textDecoration = 'none';
             pubWrapper.style.display = 'block';
             pubWrapper.target = '_blank'; // Open in new tab
@@ -775,13 +711,13 @@
       }
       
       // Execute both functions with retry
-      const executeWithRetry = function(fn, interval) {
+      const executeWithRetry = function(fn, interval = 100) {
         if (!fn()) {
           const intervalId = setInterval(function() {
             if (fn()) {
               clearInterval(intervalId);
             }
-          }, interval || 100);
+          }, interval);
         }
       };
       
