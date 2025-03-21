@@ -421,38 +421,10 @@
               '/upload/' + filename,
               // Try in paper_thumbnails folder
               '/upload/paper_thumbnails/' + filename,
-              // Try in assets folder
-              '/assets/' + filename,
-              '/assets/images/' + filename,
-              '/assets/thumbnails/' + filename,
-              // Try in static folder
-              '/static/images/' + filename,
-              '/static/thumbnails/' + filename,
               // Add GitHub Pages prefixes
               sitePrefix + '/upload/' + filename,
-              sitePrefix + '/upload/paper_thumbnails/' + filename,
-              sitePrefix + '/assets/images/' + filename,
-              sitePrefix + '/assets/thumbnails/' + filename,
-              sitePrefix + '/static/images/' + filename
+              sitePrefix + '/upload/paper_thumbnails/' + filename
             ];
-            
-            // If we have a direct URL, attempt to use it (might be CORS restricted)
-            if (pub.imageUrl) {
-              alternativePaths.unshift(pub.imageUrl);
-            }
-            
-            // Add venue-based fallback if available
-            if (venueFallback) {
-              alternativePaths.unshift(venueFallback);
-              alternativePaths.unshift(sitePrefix + venueFallback);
-            }
-            
-            // Add a default image
-            alternativePaths.push('/upload/paper_thumbnails/default.png');
-            alternativePaths.push(sitePrefix + '/upload/paper_thumbnails/default.png');
-            
-            // Log all paths we'll try
-            console.log('Will try these image paths:', alternativePaths);
             
             // Try up to 3 alternative paths
             let attemptCount = 0;
