@@ -525,50 +525,19 @@
         pubContainer.className = 'publications-container';
         
         // Load publications from config file
-        console.log('Attempting to load publications config...');
-        
-        // Try multiple possible locations for the publications.config.json file
-        const possiblePaths = [
-          '/config/en/publications.config.json',
-          'config/en/publications.config.json',
-          './config/en/publications.config.json',
-          '../config/en/publications.config.json'
-        ];
-        
-        let fetchAttempts = 0;
-        
-        function tryNextPath() {
-          if (fetchAttempts >= possiblePaths.length) {
-            console.error('Failed to load publications from all attempted paths');
-            pubContainer.innerHTML = '<p style="text-align: center; color: #000;">Unable to load publications. Please check the console for more details.</p>';
-            return;
-          }
-          
-          const path = possiblePaths[fetchAttempts];
-          console.log(`Attempting to load publications from: ${path}`);
-          
-          fetch(path)
-            .then(response => {
-              if (!response.ok) {
-                throw new Error(`Failed to fetch from ${path}: ${response.status} ${response.statusText}`);
-              }
-              return response.json();
-            })
-            .then(data => {
-              // Use publications from config file
-              const publications = data.publications || [];
-              console.log(`Successfully loaded ${publications.length} publications from ${path}`);
-              renderPublications(publications);
-            })
-            .catch(error => {
-              console.error(`Error loading from ${path}:`, error);
-              fetchAttempts++;
-              tryNextPath();
-            });
-        }
-        
-        // Start trying paths
-        tryNextPath();
+        fetch('/config/en/publications.config.json')
+          .then(response => response.json())
+          .then(data => {
+            // Use publications from config file
+            const publications = data.publications || [];
+            console.log('Loaded ' + publications.length + ' publications from config');
+            renderPublications(publications);
+          })
+          .catch(error => {
+            console.error('Error loading publications.config.json:', error);
+            // Display error message in console only
+            pubContainer.innerHTML = '<p style="text-align: center; color: #000;">Unable to load publications.</p>';
+          });
         
         // Function to render publications from data
         function renderPublications(publications) {
@@ -627,14 +596,14 @@
               if (imgSrc.includes('/Documents/GitHub/')) {
                 imgSrc = '/upload/paper_thumbnails/' + imgSrc.split('/').pop();
               }
-              // Make sure the path is absolute (but don't double-slash)
-              else if (!imgSrc.startsWith('/') && !imgSrc.startsWith('http')) {
+              // Make sure the path is absolute
+              else if (!imgSrc.startsWith('/')) {
                 imgSrc = '/' + imgSrc;
               }
               
               console.log('Setting image src to:', imgSrc);
               img.src = imgSrc;
-              img.alt = pub.title || 'Publication image';
+              img.alt = pub.title;
               img.style.maxWidth = '100%';
               img.style.height = 'auto';
               img.style.display = 'block';
@@ -645,48 +614,21 @@
               img.onerror = function() {
                 console.error('Failed to load image:', imgSrc);
                 
-                // Try several alternative paths
-                const filename = imgSrc.split('/').pop();
-                const alternativePaths = [
-                  // Try without leading slash
-                  imgSrc.startsWith('/') ? imgSrc.substring(1) : '/' + imgSrc,
-                  // Try in upload folder
-                  '/upload/' + filename,
-                  // Try in paper_thumbnails folder
-                  '/upload/paper_thumbnails/' + filename,
-                  // Try in src folder
-                  '/src/' + filename
-                ];
-                
-                console.log('Will try alternative paths:', alternativePaths);
-                
-                function tryNextPath(index) {
-                  if (index >= alternativePaths.length) {
-                    console.error('All alternative paths failed, using fallback');
+                // Try secondary path if not already in upload folder
+                if (!img.src.includes('/upload/paper_thumbnails/')) {
+                  const filename = imgSrc.split('/').pop();
+                  img.src = '/upload/paper_thumbnails/' + filename;
+                  console.log('Trying alternative path:', img.src);
+                  
+                  // If second attempt fails, create a fallback
+                  img.onerror = function() {
+                    console.error('Secondary image path also failed');
                     createFallbackImage(imageContainer, pub.title);
-                    return;
-                  }
-                  
-                  const altPath = alternativePaths[index];
-                  console.log(`Trying alternative path (${index+1}/${alternativePaths.length}):`, altPath);
-                  
-                  const testImg = new Image();
-                  testImg.onload = function() {
-                    // This path worked, use it
-                    console.log('Found working path:', altPath);
-                    img.src = altPath;
                   };
-                  
-                  testImg.onerror = function() {
-                    // Try next path
-                    tryNextPath(index + 1);
-                  };
-                  
-                  testImg.src = altPath;
+                } else {
+                  // Already tried the standard path, create fallback
+                  createFallbackImage(imageContainer, pub.title);
                 }
-                
-                // Start trying alternative paths
-                tryNextPath(0);
               };
               
               imageContainer.appendChild(img);
