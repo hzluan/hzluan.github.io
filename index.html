@@ -22,7 +22,6 @@
             min-height: 100vh;
             display: flex !important;
             flex-direction: row !important;
-            background-image: none !important;
             background: none !important;
         }
         
@@ -40,29 +39,18 @@
         
         .intro-right {
             width: 40%;
-            background-image: url('/upload/Hongzhou_bg.jpg');
-            background-size: cover !important;
-            background-position: center !important;
             position: relative;
-            filter: none !important;
-            -webkit-filter: none !important;
         }
         
-        /* GitHub Pages specific style - Use absolute URL instead of relative */
-        @media (min-width: 1px) {
-            .intro-right-gh-pages {
-                background-image: url('https://hzluan.github.io/upload/Hongzhou_bg.jpg') !important;
-            }
-        }
-        
-        /* Remove ALL overlays */
-        .intro-right::before,
-        .intro-right::after,
-        .intro-section::before,
-        .intro-section::after,
-        #particles-js,
-        .overlay {
-            display: none !important;
+        /* Background image - direct img tag for simplicity and reliability */
+        .bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
         }
         
         /* Content styling */
@@ -293,157 +281,75 @@
     document.addEventListener('DOMContentLoaded', function() {
       console.log('DOM loaded, initializing site');
       
-      // First thing: fix background image paths based on hostname
-      const isGitHubPages = window.location.hostname === 'hzluan.github.io';
-      
-      // Add inline styles to head immediately
-      if (isGitHubPages) {
-        const style = document.createElement('style');
-        style.textContent = `
-          .intro-right {
-            background-image: url('https://hzluan.github.io/upload/Hongzhou_bg.jpg') !important;
-          }
-        `;
-        document.head.appendChild(style);
-      }
+      // Create and insert the intro section if it doesn't exist
+      setupIntroSection();
       
       // Initialize particles
       initializeParticles();
       
-      // Fix all images
-      fixGalleryImages();
-      
       // Explicitly load publications section
-      // Do this with a slight delay to ensure DOM is fully processed
       setTimeout(function() {
         console.log('Loading publications section');
         loadPublications();
       }, 100);
     });
 
-    // Function to fix all images, including CSS background images
-    function fixGalleryImages() {
-      // First, fix the background image for intro-right
-      const introRight = document.querySelector('.intro-right');
-      if (introRight) {
+    // Function to set up the intro section with direct background image
+    function setupIntroSection() {
+      // Check if intro section already exists
+      let introSection = document.querySelector('.intro-section');
+      
+      if (!introSection) {
+        // Find where to insert the intro section
+        const root = document.getElementById('root') || document.body;
+        
+        // Create intro section with left and right parts
+        introSection = document.createElement('section');
+        introSection.className = 'intro-section';
+        
+        // Left side with content
+        const introLeft = document.createElement('div');
+        introLeft.className = 'intro-left';
+        introLeft.innerHTML = `
+          <div class="intro-content">
+            <h2>Hongzhou Luan</h2>
+            <h3>Computer Vision Researcher</h3>
+            <div class="social-links">
+              <a href="https://github.com/hzluan" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i></a>
+              <a href="https://scholar.google.com/citations?user=YOUR_ID" target="_blank" rel="noopener noreferrer"><i class="fas fa-graduation-cap"></i></a>
+              <a href="https://www.linkedin.com/in/hongzhou-luan/" target="_blank" rel="noopener noreferrer"><i class="fab fa-linkedin"></i></a>
+            </div>
+          </div>
+          <div id="particles-container"></div>
+        `;
+        
+        // Right side with background image (direct image tag for simplicity)
+        const introRight = document.createElement('div');
+        introRight.className = 'intro-right';
+        
+        // Simple approach: just add the image directly
+        const bgImage = document.createElement('img');
+        bgImage.className = 'bg-image';
+        bgImage.alt = 'Background';
+        
+        // Set different src based on environment
         const isGitHubPages = window.location.hostname === 'hzluan.github.io';
-        if (isGitHubPages) {
-          // Add GitHub Pages specific class
-          introRight.classList.add('intro-right-gh-pages');
+        bgImage.src = isGitHubPages 
+          ? 'https://hzluan.github.io/upload/Hongzhou_bg.jpg' 
+          : '/upload/Hongzhou_bg.jpg';
           
-          // Also apply the style directly as a backup using both protocols
-          introRight.style.backgroundImage = 'url("https://hzluan.github.io/upload/Hongzhou_bg.jpg")';
-          
-          // Force a repaint
-          introRight.style.display = 'none';
-          setTimeout(() => {
-            // Add inline style attribute as a final backup
-            introRight.setAttribute('style', 
-              'width: 40%; ' +
-              'background-image: url("https://hzluan.github.io/upload/Hongzhou_bg.jpg") !important; ' +
-              'background-size: cover !important; ' +
-              'background-position: center !important; ' +
-              'position: relative; ' +
-              'filter: none !important; ' +
-              '-webkit-filter: none !important;'
-            );
-            
-            console.log('Applied direct style attribute with absolute URL');
-          }, 10);
-          
-          console.log('Updated intro-right background for GitHub Pages');
-          
-          // Last resort: create a direct img element
-          setTimeout(() => {
-            if (getComputedStyle(introRight).backgroundImage === 'none' || 
-                getComputedStyle(introRight).backgroundImage === '') {
-              console.log('Background still not showing, creating fallback image element');
-              
-              // Clear the container first
-              introRight.innerHTML = '';
-              
-              const img = document.createElement('img');
-              img.src = 'https://hzluan.github.io/upload/Hongzhou_bg.jpg';
-              img.alt = 'Hongzhou Luan';
-              img.style.position = 'absolute';
-              img.style.top = '0';
-              img.style.left = '0';
-              img.style.width = '100%';
-              img.style.height = '100%';
-              img.style.objectFit = 'cover';
-              
-              introRight.appendChild(img);
-            }
-          }, 500);
-        }
+        // Add image to right side
+        introRight.appendChild(bgImage);
+        
+        // Add both sides to intro section
+        introSection.appendChild(introLeft);
+        introSection.appendChild(introRight);
+        
+        // Add intro section to the page
+        root.appendChild(introSection);
+        
+        console.log('Created intro section with background image');
       }
-      
-      // Find all images on the page, not just gallery
-      const allImages = document.querySelectorAll('img');
-      console.log('Found images:', allImages.length);
-      
-      if (allImages.length === 0) return;
-      
-      const isGitHubPages = window.location.hostname === 'hzluan.github.io';
-      
-      // Fix each image
-      allImages.forEach(img => {
-        const src = img.getAttribute('src') || '';
-        
-        // Skip images that are already working
-        if (src.includes('oxford-logo') || src.includes('UCBplusUCSF.png')) {
-          return;
-        }
-        
-        // Try relative path
-        let paths = [src];
-        
-        // Try with and without leading slash
-        if (!src.startsWith('/') && !src.startsWith('http')) {
-          paths.push('/' + src);
-        } else if (src.startsWith('/')) {
-          paths.push(src.substring(1));
-        }
-        
-        // Add GitHub Pages prefix if on GitHub Pages
-        if (isGitHubPages) {
-          paths.forEach(p => {
-            if (!p.startsWith('/hzluan.github.io/') && !p.startsWith('http')) {
-              paths.push('/hzluan.github.io' + (p.startsWith('/') ? p : '/' + p));
-            }
-          });
-          
-          // Also add absolute URLs as GitHub Pages sometimes requires them
-          const pathsCopy = [...paths];
-          pathsCopy.forEach(p => {
-            if (!p.startsWith('http')) {
-              const cleanPath = p.startsWith('/') ? p.substring(1) : p;
-              // Remove duplicate hzluan.github.io in path if present
-              const finalPath = cleanPath.replace(/^hzluan\.github\.io\//, '');
-              paths.push('https://hzluan.github.io/' + finalPath);
-            }
-          });
-        }
-        
-        // Try a different path for each attempt
-        tryNextPath(img, paths, 0);
-      });
-    }
-    
-    // Helper to try multiple paths
-    function tryNextPath(img, paths, index) {
-      if (index >= paths.length) return;
-      
-      const testImg = new Image();
-      testImg.onload = function() {
-        img.src = paths[index];
-      };
-      
-      testImg.onerror = function() {
-        tryNextPath(img, paths, index + 1);
-      };
-      
-      testImg.src = paths[index];
     }
     
     // Function to load publications
@@ -456,7 +362,6 @@
         console.log('Publications container not found, creating one');
         
         // Find where to insert the publications section
-        // Look for specific elements in a specific order
         const mainContent = document.querySelector('.page-content') || 
                            document.querySelector('main') || 
                            document.getElementById('root') || 
@@ -474,19 +379,11 @@
           </div>
         `;
         
-        // Insert at appropriate position: after about or before contact
-        const aboutSection = document.querySelector('.about-section');
-        const contactSection = document.querySelector('.contact-section');
-        
-        if (aboutSection && aboutSection.nextElementSibling) {
-          console.log('Inserting publications after about section');
-          mainContent.insertBefore(pubSection, aboutSection.nextElementSibling);
-        } else if (contactSection) {
-          console.log('Inserting publications before contact section');
-          mainContent.insertBefore(pubSection, contactSection);
+        // Insert at appropriate position: after intro section
+        const introSection = document.querySelector('.intro-section');
+        if (introSection && introSection.nextElementSibling) {
+          mainContent.insertBefore(pubSection, introSection.nextElementSibling);
         } else {
-          console.log('Appending publications to main content');
-          // Just append it to the main content
           mainContent.appendChild(pubSection);
         }
         
@@ -509,8 +406,8 @@
     
     // Function to fetch publications
     function fetchPublications(container) {
-      // Use hardcoded publications data as fallback
-      const fallbackData = [
+      // Use hardcoded publications data
+      const publicationsData = [
         {
           "title": "Enabling access to care through web-based clinician-patient interaction",
           "authors": "Hongzhou Luan, Jesse Bettencourt, Adriel Saporta, Roxana Daneshjou",
@@ -534,40 +431,27 @@
         }
       ];
       
-      // Try to load from file, fall back to hardcoded data
+      // Directly render the publications data
+      renderPublications(publicationsData, container);
+      
+      // Try loading from JSON file (but still use the data we already rendered)
       const isGitHubPages = window.location.hostname === 'hzluan.github.io';
-      const basePath = isGitHubPages ? '/hzluan.github.io' : '';
-      
-      let paths = [
-        `${basePath}/config/en/publications.config.json`,
-        `/config/en/publications.config.json`,
-        `config/en/publications.config.json`
-      ];
-      
-      let attemptCount = 0;
-      tryFetchPath();
-      
-      function tryFetchPath() {
-        if (attemptCount >= paths.length) {
-          console.warn('Could not load publications from file, using fallback data');
-          renderPublications(fallbackData, container);
-          return;
-        }
+      const configPath = isGitHubPages 
+        ? 'https://hzluan.github.io/config/en/publications.config.json'
+        : '/config/en/publications.config.json';
         
-        fetch(paths[attemptCount])
-          .then(response => {
-            if (!response.ok) throw new Error('Failed to fetch');
-            return response.json();
-          })
-          .then(data => {
-            console.log('Publications loaded successfully');
-            renderPublications(data, container);
-          })
-          .catch(error => {
-            attemptCount++;
-            tryFetchPath();
-          });
-      }
+      fetch(configPath)
+        .then(response => {
+          if (!response.ok) throw new Error('Failed to fetch');
+          return response.json();
+        })
+        .then(data => {
+          console.log('Publications loaded from file successfully');
+          renderPublications(data, container);
+        })
+        .catch(error => {
+          console.log('Using hardcoded publications data');
+        });
     }
     
     // Function to render publications
@@ -623,45 +507,34 @@
           imageContainer.className = 'pub-image-container';
           
           const img = document.createElement('img');
-          const isGitHubPages = window.location.hostname === 'hzluan.github.io';
-          const basePath = isGitHubPages ? '/hzluan.github.io' : '';
           
-          // Simple path handling
-          let imgPath = pub.image;
-          if (!imgPath.startsWith('/') && !imgPath.startsWith('http')) {
-            imgPath = '/' + imgPath;
+          // Simple direct path handling for gallery images
+          const isGitHubPages = window.location.hostname === 'hzluan.github.io';
+          let imgPath = pub.image.startsWith('/') ? pub.image : '/' + pub.image;
+          
+          // Direct absolute URL for GitHub Pages
+          if (isGitHubPages) {
+            img.src = 'https://hzluan.github.io' + imgPath;
+          } else {
+            img.src = imgPath;
           }
           
-          img.src = isGitHubPages ? basePath + imgPath : imgPath;
           img.alt = pub.title;
           
-          // Handle errors
+          // Simple fallback for image errors
           img.onerror = function() {
-            // Try with alternative path
-            const altPath = '/upload/paper_thumbnails/' + imgPath.split('/').pop();
-            const altSrc = isGitHubPages ? basePath + altPath : altPath;
+            img.style.display = 'none';
             
-            // Try alternative
-            const testImg = new Image();
-            testImg.onload = function() {
-              img.src = altSrc;
-            };
-            testImg.onerror = function() {
-              // If still fails, show colored placeholder
-              img.style.display = 'none';
-              
-              const fallback = document.createElement('div');
-              fallback.style.width = '100%';
-              fallback.style.height = '120px';
-              fallback.style.backgroundColor = '#0066cc';
-              fallback.style.color = 'white';
-              fallback.style.display = 'flex';
-              fallback.style.justifyContent = 'center';
-              fallback.style.alignItems = 'center';
-              fallback.textContent = pub.venue || 'Publication';
-              imageContainer.appendChild(fallback);
-            };
-            testImg.src = altSrc;
+            const fallback = document.createElement('div');
+            fallback.style.width = '100%';
+            fallback.style.height = '120px';
+            fallback.style.backgroundColor = '#0066cc';
+            fallback.style.color = 'white';
+            fallback.style.display = 'flex';
+            fallback.style.justifyContent = 'center';
+            fallback.style.alignItems = 'center';
+            fallback.textContent = pub.venue || 'Publication';
+            imageContainer.appendChild(fallback);
           };
           
           imageContainer.appendChild(img);
@@ -688,7 +561,7 @@
         return;
       }
       
-      // Create particles container
+      // Get existing particles container or create one
       let particlesContainer = document.getElementById('particles-container');
       if (!particlesContainer) {
         particlesContainer = document.createElement('div');
@@ -715,17 +588,7 @@
         retina_detect: true
       });
       
-      // Position the canvas
-      setTimeout(() => {
-        const canvas = document.querySelector('#particles-container canvas');
-        if (canvas) {
-          canvas.style.position = 'absolute';
-          canvas.style.top = '0';
-          canvas.style.left = '0';
-          canvas.style.width = '100%';
-          canvas.style.height = '100%';
-        }
-      }, 100);
+      console.log('Particles initialized');
     }
     </script>
 </body>
