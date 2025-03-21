@@ -633,7 +633,9 @@
           publications.forEach(pub => {
             // Create clickable container wrapper
             const pubWrapper = document.createElement('a');
-            pubWrapper.href = pub.link || pub.pdf || pub.code || '#';
+            // Check all possible link fields in the publication object
+            pubWrapper.href = pub.link || pub.paper || pub.url || pub.pdf || pub.code || '#';
+            console.log('Publication link:', pub.title, '->', pubWrapper.href); // Debug log
             pubWrapper.style.textDecoration = 'none';
             pubWrapper.style.display = 'block';
             pubWrapper.target = '_blank'; // Open in new tab
