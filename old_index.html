@@ -15,6 +15,26 @@
         .nav-bar ul li:last-child {
             display: none !important;
         }
+        
+        /* Make sure intro section is full height */
+        .intro-section {
+            min-height: 100vh;
+        }
+        
+        /* Adjust mobile responsiveness */
+        @media (max-width: 768px) {
+            .intro-left, .intro-right {
+                width: 100% !important;
+            }
+            
+            .intro-section {
+                flex-direction: column !important;
+            }
+            
+            .intro-right {
+                height: 50vh !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -25,14 +45,17 @@
     <script src="/static/js/2.ae2b3713.chunk.js"></script>
     <script src="/static/js/main.d1cf4719.chunk.js"></script>
     
+    <!-- Split Layout Script -->
+    <script src="/static/js/split-layout.js"></script>
+    
     <script>
-    // Script to implement the split layout and fix navigation labels
+    // Script to fix the confusing navigation labels
     document.addEventListener('DOMContentLoaded', function() {
       // Function to update the navigation labels
       const updateNavLabels = function() {
         const navBar = document.querySelector('.nav-bar ul');
         if (navBar && navBar.children.length >= 4) {
-          // Change "News" to "Updates"
+          // Find the second nav item (index 1) which is "News" -> "Updates"
           const newsItem = navBar.children[1].querySelector('a');
           if (newsItem && newsItem.getAttribute('href') === '#resume') {
             const textNode = Array.from(newsItem.childNodes).find(node => 
@@ -42,7 +65,7 @@
             }
           }
           
-          // Change "Gallery" to "Photos"
+          // Find the third nav item (index 2) which is "Gallery" -> "Photos"
           const galleryItem = navBar.children[2].querySelector('a');
           if (galleryItem && galleryItem.getAttribute('href') === '#works') {
             const textNode = Array.from(galleryItem.childNodes).find(node => 
