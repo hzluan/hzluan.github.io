@@ -223,65 +223,103 @@
     <script src="/static/js/main.d1cf4719.chunk.js"></script>
     
     <script>
-    // Initialize when DOM is loaded
+    // Initialize publications when DOM is loaded
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('DOM loaded, initializing site');
+      console.log('DOM loaded, initializing publications');
       
       // Initialize particles
-      initializeParticles();
+      executeWithRetry(initializeParticles);
       
-      // Fix gallery images
-      fixGalleryImages();
+      // Update gallery links with retries
+      executeWithRetry(updateAllGalleryLinks);
       
-      // Load publications if container exists
-      const pubContainer = document.getElementById('publications-container');
-      if (pubContainer) {
-        loadPublications();
-      }
+      // Load publications
+      loadPublications();
     });
 
     // Function to load publications
     function loadPublications() {
-      const pubContainer = document.getElementById('publications-container');
-      if (!pubContainer) return;
+      const publicationsContainer = document.getElementById('publications-container');
       
       // Show loading indicator
-      pubContainer.innerHTML = '<div class="loading">Loading publications...</div>';
+      publicationsContainer.innerHTML = '<div class="loading">Loading publications...</div>';
       
-      // Determine the correct path based on environment
-      const isGitHubPages = window.location.hostname === 'hzluan.github.io';
-      const basePath = isGitHubPages ? '/hzluan.github.io' : '';
-      const configPath = `${basePath}/config/en/publications.config.json`;
+      // Normalize paths based on environment
+      const sitePrefix = window.location.hostname === 'hzluan.github.io' ? '/hzluan.github.io' : '';
+      console.log('Site prefix based on hostname:', sitePrefix);
       
-      console.log('Loading publications from:', configPath);
+      // Possible paths to try for publications config
+      const possiblePaths = [
+        './config/en/publications.config.json',
+        '/config/en/publications.config.json',
+        'config/en/publications.config.json'
+      ];
       
-      // Fetch publication data
-      fetch(configPath)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-          return response.json();
-        })
-        .then(data => {
-          console.log('Publications loaded:', data.length, 'items');
-          renderPublications(data);
-        })
-        .catch(error => {
-          console.error('Error loading publications:', error.message);
-          pubContainer.innerHTML = `
+      // Add GitHub Pages prefixed paths if needed
+      if (window.location.hostname === 'hzluan.github.io') {
+        possiblePaths.push(
+          sitePrefix + '/config/en/publications.config.json',
+          sitePrefix + './config/en/publications.config.json'
+        );
+      }
+      
+      console.log('Will try to load publications from these paths:', possiblePaths);
+      
+      // Function to try loading from next path
+      let pathIndex = 0;
+      
+      function tryLoadPath() {
+        if (pathIndex >= possiblePaths.length) {
+          // All paths failed
+          console.error('Failed to load publications from all paths:', possiblePaths);
+          console.log('Current hostname:', window.location.hostname);
+          console.log('Current pathname:', window.location.pathname);
+          console.log('Full URL:', window.location.href);
+          
+          // Show error to user
+          publicationsContainer.innerHTML = `
             <div class="error-message">
               <p>Unable to load publications. Please try again later.</p>
               <button onclick="loadPublications()">Retry</button>
             </div>
           `;
-        });
+          return;
+        }
+        
+        const path = possiblePaths[pathIndex];
+        console.log(`Attempting to load publications from path (${pathIndex + 1}/${possiblePaths.length}):`, path);
+        
+        fetch(path)
+          .then(response => {
+            console.log('Response for', path, ':', response.status, response.statusText);
+            
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            
+            console.log('Successfully loaded publications from:', path);
+            return response.json();
+          })
+          .then(data => {
+            console.log('Publications data loaded:', data.length, 'items');
+            renderPublications(data);
+          })
+          .catch(error => {
+            console.error('Error loading from', path, ':', error.message);
+            pathIndex++;
+            tryLoadPath();
+          });
+      }
+      
+      // Start loading process
+      tryLoadPath();
     }
     
     // Function to render publications
     function renderPublications(publications) {
-      const pubContainer = document.getElementById('publications-container');
-      pubContainer.innerHTML = '';
+      console.log('Rendering publications:', publications.length);
+      const publicationsContainer = document.getElementById('publications-container');
+      publicationsContainer.innerHTML = '';
       
       // Sort publications by date (newest first)
       publications.sort((a, b) => {
@@ -290,13 +328,14 @@
         return dateB - dateA;
       });
       
-      // Create publication items
       publications.forEach(pub => {
+        console.log('Rendering publication:', pub.title);
+        
         // Create publication item
         const pubItem = document.createElement('div');
         pubItem.className = 'publication-item';
         
-        // Create title with link if available
+        // Create title
         const title = document.createElement('h3');
         title.className = 'publication-title';
         if (pub.url) {
@@ -310,7 +349,7 @@
         }
         pubItem.appendChild(title);
         
-        // Add authors
+        // Create authors
         if (pub.authors) {
           const authors = document.createElement('p');
           authors.className = 'publication-authors';
@@ -318,7 +357,7 @@
           pubItem.appendChild(authors);
         }
         
-        // Add venue
+        // Create venue
         if (pub.venue) {
           const venue = document.createElement('p');
           venue.className = 'publication-venue';
@@ -326,8 +365,9 @@
           pubItem.appendChild(venue);
         }
         
-        // Add image if available
+        // Create image container
         if (pub.image) {
+          console.log('Publication has image:', pub.image);
           const imageContainer = document.createElement('div');
           imageContainer.className = 'publication-image-container';
           imageContainer.style.alignSelf = 'center';
@@ -339,18 +379,26 @@
           
           const img = document.createElement('img');
           
-          // Fix image path for GitHub Pages
-          const isGitHubPages = window.location.hostname === 'hzluan.github.io';
-          const basePath = isGitHubPages ? '/hzluan.github.io' : '';
-          let imgPath = pub.image;
+          // Normalize the image path
+          let imgSrc = pub.image;
           
-          // Ensure path starts with slash
-          if (!imgPath.startsWith('/') && !imgPath.startsWith('http')) {
-            imgPath = '/' + imgPath;
+          // Handle various path scenarios
+          if (imgSrc.includes('/Documents/GitHub/')) {
+            // Local development path - extract filename
+            imgSrc = '/upload/paper_thumbnails/' + imgSrc.split('/').pop();
+          } else if (!imgSrc.startsWith('/') && !imgSrc.startsWith('http')) {
+            // Relative path - add leading slash
+            imgSrc = '/' + imgSrc;
           }
           
-          // Set image attributes
-          img.src = isGitHubPages ? basePath + imgPath : imgPath;
+          // For GitHub Pages, adjust the path if needed
+          const sitePrefix = window.location.hostname === 'hzluan.github.io' ? '/hzluan.github.io' : '';
+          const fullImgSrc = window.location.hostname === 'hzluan.github.io' && !imgSrc.startsWith('/hzluan.github.io/') 
+            ? sitePrefix + imgSrc 
+            : imgSrc;
+          
+          console.log('Setting image src to:', fullImgSrc);
+          img.src = fullImgSrc;
           img.alt = pub.title || 'Publication image';
           img.style.maxWidth = '100%';
           img.style.height = 'auto';
@@ -358,125 +406,131 @@
           img.style.borderRadius = '4px';
           img.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
           
-          // Handle image loading errors
+          // Error handling for image loading
           img.onerror = function() {
-            const fallback = document.createElement('div');
-            fallback.style.width = '100%';
-            fallback.style.height = '120px';
-            fallback.style.backgroundColor = '#0066cc';
-            fallback.style.color = 'white';
-            fallback.style.display = 'flex';
-            fallback.style.justifyContent = 'center';
-            fallback.style.alignItems = 'center';
-            fallback.style.borderRadius = '4px';
-            fallback.style.textAlign = 'center';
-            fallback.textContent = 'Publication';
+            console.error('Failed to load image:', img.src);
             
-            imageContainer.innerHTML = '';
-            imageContainer.appendChild(fallback);
+            // Try alternative paths
+            const filename = imgSrc.split('/').pop();
+            const alternativePaths = [
+              // Try without leading slash
+              imgSrc.startsWith('/') ? imgSrc.substring(1) : '/' + imgSrc,
+              // Try with GitHub Pages prefix
+              sitePrefix + imgSrc,
+              // Try in upload folder
+              '/upload/' + filename,
+              // Try in paper_thumbnails folder
+              '/upload/paper_thumbnails/' + filename,
+              // Try in assets folder
+              '/assets/' + filename,
+              '/assets/images/' + filename,
+              '/assets/thumbnails/' + filename,
+              // Try in static folder
+              '/static/images/' + filename,
+              '/static/thumbnails/' + filename,
+              // Add GitHub Pages prefixes
+              sitePrefix + '/upload/' + filename,
+              sitePrefix + '/upload/paper_thumbnails/' + filename,
+              sitePrefix + '/assets/images/' + filename,
+              sitePrefix + '/assets/thumbnails/' + filename,
+              sitePrefix + '/static/images/' + filename
+            ];
+            
+            // If we have a direct URL, attempt to use it (might be CORS restricted)
+            if (pub.imageUrl) {
+              alternativePaths.unshift(pub.imageUrl);
+            }
+            
+            // Add venue-based fallback if available
+            if (venueFallback) {
+              alternativePaths.unshift(venueFallback);
+              alternativePaths.unshift(sitePrefix + venueFallback);
+            }
+            
+            // Add a default image
+            alternativePaths.push('/upload/paper_thumbnails/default.png');
+            alternativePaths.push(sitePrefix + '/upload/paper_thumbnails/default.png');
+            
+            // Log all paths we'll try
+            console.log('Will try these image paths:', alternativePaths);
+            
+            // Try up to 3 alternative paths
+            let attemptCount = 0;
+            
+            function tryAlternativePath() {
+              if (attemptCount >= alternativePaths.length) {
+                // All paths failed, use fallback
+                console.error('All image paths failed, using fallback');
+                createFallbackImage(imageContainer, pub);
+                return;
+              }
+              
+              const altPath = alternativePaths[attemptCount];
+              console.log(`Trying alternative image path (${attemptCount+1}/${alternativePaths.length}):`, altPath);
+              
+              const testImg = new Image();
+              testImg.onload = function() {
+                console.log('Found working image path:', altPath);
+                img.src = altPath;
+              };
+              
+              testImg.onerror = function() {
+                attemptCount++;
+                tryAlternativePath();
+              };
+              
+              testImg.src = altPath;
+            }
+            
+            tryAlternativePath();
           };
           
           imageContainer.appendChild(img);
           pubItem.appendChild(imageContainer);
+        } else {
+          console.log('Publication has no image:', pub.title);
         }
         
-        // Add to container
-        pubContainer.appendChild(pubItem);
+        // Add the publication item to the container
+        publicationsContainer.appendChild(pubItem);
       });
     }
     
-    // Function to fix gallery images
-    function fixGalleryImages() {
-      // Find all gallery images
-      const galleryImages = document.querySelectorAll('.gallery-item img, .gallery img, .photo-gallery img');
-      console.log('Found gallery images:', galleryImages.length);
+    // Function to create a fallback colored box with text when image fails
+    function createFallbackImage(container, pub) {
+      console.log('Creating fallback for publication:', pub.title);
+      // Remove existing image if any
+      container.innerHTML = '';
       
-      if (galleryImages.length === 0) return;
+      // Create colored div with text
+      const fallback = document.createElement('div');
+      fallback.style.width = '100%';
+      fallback.style.height = '120px';
+      fallback.style.backgroundColor = '#0066cc';
+      fallback.style.color = 'white';
+      fallback.style.display = 'flex';
+      fallback.style.justifyContent = 'center';
+      fallback.style.alignItems = 'center';
+      fallback.style.borderRadius = '4px';
+      fallback.style.padding = '10px';
+      fallback.style.textAlign = 'center';
+      fallback.style.fontWeight = 'bold';
       
-      const isGitHubPages = window.location.hostname === 'hzluan.github.io';
-      const basePath = isGitHubPages ? '/hzluan.github.io' : '';
+      // Add paper icon and publication info
+      fallback.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          <span style="margin-top: 8px; font-size: 12px;">${pub.venue || 'Publication'}</span>
+        </div>
+      `;
       
-      // Fix each image
-      galleryImages.forEach(img => {
-        const src = img.getAttribute('src');
-        if (!src) return;
-        
-        // Ensure path starts with slash
-        let fixedSrc = src;
-        if (!src.startsWith('/') && !src.startsWith('http')) {
-          fixedSrc = '/' + src;
-        }
-        
-        // Add GitHub Pages prefix if needed
-        if (isGitHubPages && !fixedSrc.startsWith('/hzluan.github.io/')) {
-          fixedSrc = basePath + fixedSrc;
-        }
-        
-        // Update image
-        img.src = fixedSrc;
-        
-        // Add error handling
-        img.onerror = function() {
-          console.error('Failed to load image:', fixedSrc);
-          img.style.border = '1px dashed red';
-          img.style.padding = '10px';
-        };
-      });
-    }
-    
-    // Particles initialization
-    function initializeParticles() {
-      // Check if particles.js is loaded
-      if (typeof particlesJS === 'undefined') {
-        console.warn('particlesJS not loaded, skipping particles');
-        return;
-      }
-      
-      // Find intro section
-      const introLeft = document.querySelector('.intro-section .intro-left');
-      if (!introLeft) {
-        console.warn('No intro-left found, skipping particles');
-        return;
-      }
-      
-      // Create particles container
-      let particlesContainer = document.getElementById('particles-container');
-      if (!particlesContainer) {
-        particlesContainer = document.createElement('div');
-        particlesContainer.id = 'particles-container';
-        introLeft.appendChild(particlesContainer);
-      }
-      
-      // Initialize particles
-      particlesJS('particles-container', {
-        particles: {
-          number: { value: 80, density: { enable: true, value_area: 800 } },
-          color: { value: '#ffffff' },
-          shape: { type: 'circle' },
-          opacity: { value: 0.5, random: false },
-          size: { value: 3, random: true },
-          line_linked: { enable: true, distance: 150, color: '#ffffff', opacity: 0.4, width: 1 },
-          move: { enable: true, speed: 2, direction: 'none', random: false, straight: false, out_mode: 'out', bounce: false }
-        },
-        interactivity: {
-          detect_on: 'canvas',
-          events: { onhover: { enable: true, mode: 'grab' }, onclick: { enable: true, mode: 'push' }, resize: true },
-          modes: { grab: { distance: 140, line_linked: { opacity: 1 } }, push: { particles_nb: 4 } }
-        },
-        retina_detect: true
-      });
-      
-      // Position the canvas
-      setTimeout(() => {
-        const canvas = document.querySelector('#particles-container canvas');
-        if (canvas) {
-          canvas.style.position = 'absolute';
-          canvas.style.top = '0';
-          canvas.style.left = '0';
-          canvas.style.width = '100%';
-          canvas.style.height = '100%';
-        }
-      }, 100);
+      container.appendChild(fallback);
     }
     </script>
 </body>
