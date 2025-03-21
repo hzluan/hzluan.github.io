@@ -10,6 +10,12 @@
     <link rel="manifest" href="/manifest.json" />
     <title>Hongzhou Luan</title>
     <link href="/static/css/main.3f09121e.chunk.css" rel="stylesheet">
+    <style>
+        /* Simple CSS to hide the language switcher li element */
+        .nav-bar ul li:last-child {
+            display: none !important;
+        }
+    </style>
 </head>
 <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -18,34 +24,6 @@
     <script src="/static/js/runtime-main.c72e126b.js"></script>
     <script src="/static/js/2.ae2b3713.chunk.js"></script>
     <script src="/static/js/main.d1cf4719.chunk.js"></script>
-    
-    <script>
-    // Script to completely remove the language switch button
-    document.addEventListener('DOMContentLoaded', function() {
-      const removeButton = function() {
-        const navBar = document.querySelector('.nav-bar ul');
-        if (navBar && navBar.children.length > 0) {
-          const lastItem = navBar.children[navBar.children.length - 1];
-          if (lastItem) {
-            // Remove the element completely
-            lastItem.parentNode.removeChild(lastItem);
-            return true;
-          }
-        }
-        return false;
-      };
-      
-      // Try immediately
-      if (!removeButton()) {
-        // If not successful, try again after a delay
-        const interval = setInterval(function() {
-          if (removeButton()) {
-            clearInterval(interval);
-          }
-        }, 100);
-      }
-    });
-    </script>
 </body>
 </html>
 
