@@ -648,8 +648,18 @@
               imageContainer.className = 'pub-image-container';
               
               const img = document.createElement('img');
-              img.src = pub.image;
+              img.src = pub.image.startsWith('/') ? pub.image : '/' + pub.image;
               img.alt = pub.title;
+              img.style.maxWidth = '100%';
+              img.style.height = 'auto';
+              img.style.display = 'block';
+              img.onerror = function() {
+                console.error('Failed to load image:', pub.image);
+                // Try alternative path
+                if (!img.src.includes('/upload/')) {
+                  img.src = '/upload/' + pub.image.split('/').pop();
+                }
+              };
               
               imageContainer.appendChild(img);
               pubItem.appendChild(imageContainer);
