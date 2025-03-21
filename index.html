@@ -571,57 +571,15 @@
         fetch('/config/en/publications.config.json')
           .then(response => response.json())
           .then(data => {
-            // Use publications from config file if available
+            // Use publications from config file
             const publications = data.publications || [];
-            
-            if (publications.length === 0) {
-              // Use fallback example publications if none found in config
-              console.log('No publications found in config, using examples');
-              renderPublications([
-                {
-                  title: "Your Paper Title 1",
-                  authors: "Your Name, Co-author 1, Co-author 2",
-                  venue: "Conference/Journal Name, Year",
-                  link: "#",
-                  pdf: "#",
-                  code: "#"
-                },
-                {
-                  title: "Your Paper Title 2",
-                  authors: "Your Name, Co-author 3, Co-author 4",
-                  venue: "Conference/Journal Name, Year",
-                  link: "#",
-                  pdf: "#",
-                  code: "#"
-                }
-              ]);
-            } else {
-              // Render publications from config file
-              console.log(`Loaded ${publications.length} publications from config`);
-              renderPublications(publications);
-            }
+            console.log(`Loaded ${publications.length} publications from config`);
+            renderPublications(publications);
           })
           .catch(error => {
             console.error('Error loading publications.config.json:', error);
-            // Use fallback example publications if config file not found or invalid
-            renderPublications([
-              {
-                title: "Your Paper Title 1",
-                authors: "Your Name, Co-author 1, Co-author 2",
-                venue: "Conference/Journal Name, Year",
-                link: "#",
-                pdf: "#",
-                code: "#"
-              },
-              {
-                title: "Your Paper Title 2",
-                authors: "Your Name, Co-author 3, Co-author 4",
-                venue: "Conference/Journal Name, Year",
-                link: "#",
-                pdf: "#",
-                code: "#"
-              }
-            ]);
+            // Display error message in console only
+            pubContainer.innerHTML = '<p style="text-align: center; color: #000;">Unable to load publications.</p>';
           });
         
         // Function to render publications from data
