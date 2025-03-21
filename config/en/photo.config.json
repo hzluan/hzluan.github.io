@@ -1,15 +1,6 @@
 {
     "covers": [
-        {
-            "filter": "us",
-            "image": "FS.jpg",
-            "location": "SF, 2023",
-            "position": "col-lg-2 col-md-6",
-            "title": "Fashion Show",
-            "description": "",
-            "link": "",
-            "id": "fs"
-        },
+
         {
             "filter": "uk",
             "image": "graduation.jpg",
