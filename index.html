@@ -646,21 +646,15 @@
               
               // Handle various path scenarios
               if (imgSrc.includes('/Documents/GitHub/')) {
-                // Local development path - extract filename
                 imgSrc = '/upload/paper_thumbnails/' + imgSrc.split('/').pop();
-              } else if (!imgSrc.startsWith('/') && !imgSrc.startsWith('http')) {
-                // Relative path - add leading slash
+              }
+              // Make sure the path is absolute for GitHub Pages (but don't double-slash)
+              else if (!imgSrc.startsWith('/') && !imgSrc.startsWith('http')) {
                 imgSrc = '/' + imgSrc;
               }
               
-              // For GitHub Pages, adjust the path if needed
-              const sitePrefix = window.location.hostname === 'hzluan.github.io' ? '/hzluan.github.io' : '';
-              const fullImgSrc = window.location.hostname === 'hzluan.github.io' && !imgSrc.startsWith('/hzluan.github.io/') 
-                ? sitePrefix + imgSrc 
-                : imgSrc;
-              
-              console.log('Setting image src to:', fullImgSrc);
-              img.src = fullImgSrc;
+              console.log('Setting image src to:', imgSrc);
+              img.src = imgSrc;
               img.alt = pub.title || 'Publication image';
               img.style.maxWidth = '100%';
               img.style.height = 'auto';
@@ -668,55 +662,68 @@
               img.style.borderRadius = '4px';
               img.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
               
+              // For GitHub Pages, we need to handle domain prefixing for the image paths
+              const sitePrefix = window.location.hostname === 'hzluan.github.io' ? '/hzluan.github.io' : '';
+              if (window.location.hostname === 'hzluan.github.io' && !imgSrc.startsWith('/hzluan.github.io/')) {
+                const originalSrc = img.src;
+                img.src = sitePrefix + imgSrc;
+                console.log('GitHub Pages detected, adjusting image path from', originalSrc, 'to', img.src);
+              }
+              
               // Error handling for image loading
               img.onerror = function() {
-                console.error('Failed to load image:', img.src);
+                console.error('Failed to load image:', img.src, 'original path:', imgSrc);
                 
-                // Try alternative paths
+                // Try several alternative paths
                 const filename = imgSrc.split('/').pop();
                 const alternativePaths = [
                   // Try without leading slash
                   imgSrc.startsWith('/') ? imgSrc.substring(1) : '/' + imgSrc,
-                  // Try with GitHub Pages prefix
+                  // Try with GitHub Pages prefix if on GitHub Pages
                   sitePrefix + imgSrc,
                   // Try in upload folder
                   '/upload/' + filename,
+                  sitePrefix + '/upload/' + filename,
                   // Try in paper_thumbnails folder
                   '/upload/paper_thumbnails/' + filename,
-                  // Add GitHub Pages prefixes
-                  sitePrefix + '/upload/' + filename,
-                  sitePrefix + '/upload/paper_thumbnails/' + filename
-                ];
+                  sitePrefix + '/upload/paper_thumbnails/' + filename,
+                  // Try in src folder
+                  '/src/' + filename,
+                  sitePrefix + '/src/' + filename,
+                  // Try ML4H specific image if the publication is ML4H
+                  pub.venue && pub.venue.includes('ML4H') ? '/upload/paper_thumbnails/2024ML4H.png' : null,
+                  pub.venue && pub.venue.includes('ML4H') ? sitePrefix + '/upload/paper_thumbnails/2024ML4H.png' : null
+                ].filter(Boolean); // Remove null entries
                 
-                // Try up to 3 alternative paths
-                let attemptCount = 0;
+                console.log('Will try alternative paths:', alternativePaths);
                 
-                function tryAlternativePath() {
-                  if (attemptCount >= alternativePaths.length) {
-                    // All paths failed, use fallback
-                    console.error('All image paths failed, using fallback');
-                    createFallbackImage(imageContainer, pub);
+                function tryNextPath(index) {
+                  if (index >= alternativePaths.length) {
+                    console.error('All alternative paths failed, using fallback');
+                    createFallbackImage(imageContainer, pub.title);
                     return;
                   }
                   
-                  const altPath = alternativePaths[attemptCount];
-                  console.log(`Trying alternative image path (${attemptCount+1}/${alternativePaths.length}):`, altPath);
+                  const altPath = alternativePaths[index];
+                  console.log(`Trying alternative path (${index+1}/${alternativePaths.length}):`, altPath);
                   
                   const testImg = new Image();
                   testImg.onload = function() {
-                    console.log('Found working image path:', altPath);
+                    // This path worked, use it
+                    console.log('Found working path:', altPath);
                     img.src = altPath;
                   };
                   
                   testImg.onerror = function() {
-                    attemptCount++;
-                    tryAlternativePath();
+                    // Try next path
+                    tryNextPath(index + 1);
                   };
                   
                   testImg.src = altPath;
                 }
                 
-                tryAlternativePath();
+                // Start trying alternative paths
+                tryNextPath(0);
               };
               
               imageContainer.appendChild(img);
@@ -726,8 +733,8 @@
             }
             
             // Function to create a fallback colored box with text when image fails
-            function createFallbackImage(container, pub) {
-              console.log('Creating fallback for publication:', pub.title);
+            function createFallbackImage(container, title) {
+              console.log('Creating fallback for failed image:', title);
               // Remove existing image if any
               container.innerHTML = '';
               
@@ -745,7 +752,7 @@
               fallback.style.textAlign = 'center';
               fallback.style.fontWeight = 'bold';
               
-              // Add paper icon and publication info
+              // Add paper icon and title
               fallback.innerHTML = `
                 <div style="display: flex; flex-direction: column; align-items: center;">
                   <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
