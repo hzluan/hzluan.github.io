@@ -1,0 +1,24 @@
+{
+    "intro_images": [
+        {
+            "path": "bg.jpeg",
+            "color": "rgb(138, 198, 221)"
+        }
+    ],
+    "subtitle": "UC Berkeley - UCSF 联培博士生\n牛津大学工程系MEng 22届毕业生🎓\n旅游 | 摄影 | 科技 | 音乐 & 电影",
+    "title": "这里是 <span class='highlight'>栾泓舟</span> 的个人主页",
+    "links": [
+        {
+            "icon": "file",
+            "html": "&nbsp;简历: <a class='highlight' href=''>工作简历</a> | <a class='highlight' href=''>个人生活简历</a>"
+        },
+        {
+            "icon": "blog",
+            "html": "博客: <a class='highlight' href='http://blog.tomzhao.me/?page_id=63'>学习博客</a> | <a class='highlight' href='http://blog.tomzhao.me/?page_id=60'>生活博客</a>"
+        },
+        {
+            "icon": "music",
+            "html": "音乐列表: <a class='highlight' href='https://music.apple.com/us/playlist/replay-2021/pl.rp-dwwPinVwxaa'>21'</a> | <a class='highlight' href='https://music.apple.com/us/playlist/replay-2022/pl.rp-eRRBun52jww'>22'</a> | <a class='highlight' href='https://music.apple.com/us/playlist/replay-2023/pl.rp-pEEPHZg5Bnn'>23'</a>"
+        }
+    ]
+}
