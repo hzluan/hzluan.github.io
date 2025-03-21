@@ -11,9 +11,77 @@
     <title>Hongzhou Luan</title>
     <link href="/static/css/main.3f09121e.chunk.css" rel="stylesheet">
     <style>
-        /* Simple CSS to hide the language switcher li element */
+        /* Hide language switcher */
         .nav-bar ul li:last-child {
             display: none !important;
+        }
+        
+        /* Split layout styles */
+        .intro-section {
+            min-height: 100vh;
+            display: flex !important;
+            flex-direction: row !important;
+            background-image: none !important;
+        }
+        
+        .intro-left {
+            width: 60%;
+            background-color: rgba(0, 0, 0, 0.7);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 40px;
+            box-sizing: border-box;
+        }
+        
+        .intro-right {
+            width: 40%;
+            background-image: url('/upload/Hongzhou.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        /* Content styling */
+        .intro-content {
+            position: relative;
+            z-index: 10;
+        }
+        
+        .intro-section h2, 
+        .intro-section h3 {
+            text-align: left !important;
+            padding-left: 20px !important;
+        }
+        
+        /* Particles container */
+        #particles-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .intro-section {
+                flex-direction: column !important;
+            }
+            
+            .intro-left, 
+            .intro-right {
+                width: 100% !important;
+            }
+            
+            .intro-right {
+                height: 50vh !important;
+            }
+            
+            .intro-left {
+                min-height: 50vh;
+            }
         }
     </style>
 </head>
@@ -28,17 +96,79 @@
     <script>
     // Script to implement the split layout and fix navigation labels
     document.addEventListener('DOMContentLoaded', function() {
-      // Function to update the navigation labels
+      // Implement split layout
+      const createSplitLayout = function() {
+        const introSection = document.querySelector('.intro-section');
+        
+        if (introSection && !introSection.classList.contains('split-modified')) {
+          console.log('Creating split layout for intro section');
+          
+          // Save original content
+          const originalContent = introSection.innerHTML;
+          
+          // Clear the intro section
+          introSection.innerHTML = '';
+          
+          // Add split-modified class
+          introSection.classList.add('split-modified');
+          
+          // Create left column with particles
+          const leftColumn = document.createElement('div');
+          leftColumn.className = 'intro-left';
+          
+          // Create right column with image
+          const rightColumn = document.createElement('div');
+          rightColumn.className = 'intro-right';
+          
+          // Create particles container for left side only
+          const particlesContainer = document.createElement('div');
+          particlesContainer.id = 'particles-container';
+          
+          // Create content container
+          const contentContainer = document.createElement('div');
+          contentContainer.className = 'intro-content';
+          contentContainer.innerHTML = originalContent;
+          
+          // Assemble the structure
+          leftColumn.appendChild(particlesContainer);
+          leftColumn.appendChild(contentContainer);
+          introSection.appendChild(leftColumn);
+          introSection.appendChild(rightColumn);
+          
+          // Move particles canvas into our container
+          setTimeout(function() {
+            const particlesCanvas = document.querySelector('canvas.particles-js-canvas-el');
+            if (particlesCanvas) {
+              particlesContainer.appendChild(particlesCanvas);
+            }
+          }, 500);
+          
+          return true;
+        }
+        return false;
+      };
+      
+      // Fix navigation labels
       const updateNavLabels = function() {
         const navBar = document.querySelector('.nav-bar ul');
         if (navBar && navBar.children.length >= 4) {
-          // Change "News" to "Updates"
+          // Change "News" to "Updates" and href from "#resume" to "#updates"
           const newsItem = navBar.children[1].querySelector('a');
           if (newsItem && newsItem.getAttribute('href') === '#resume') {
+            // Update the navigation label
             const textNode = Array.from(newsItem.childNodes).find(node => 
               node.nodeType === Node.TEXT_NODE);
             if (textNode) {
               textNode.nodeValue = 'Updates';
+            }
+            
+            // Update the href attribute
+            newsItem.setAttribute('href', '#updates');
+            
+            // Also update the resume section ID to match the new link
+            const resumeSection = document.querySelector('#resume');
+            if (resumeSection) {
+              resumeSection.id = 'updates';
             }
           }
           
@@ -57,15 +187,19 @@
         return false;
       };
       
-      // Try immediately
-      if (!updateNavLabels()) {
-        // Try again after a delay
-        const interval = setInterval(function() {
-          if (updateNavLabels()) {
-            clearInterval(interval);
-          }
-        }, 100);
-      }
+      // Execute both functions with retry
+      const executeWithRetry = function(fn, interval) {
+        if (!fn()) {
+          const intervalId = setInterval(function() {
+            if (fn()) {
+              clearInterval(intervalId);
+            }
+          }, interval || 100);
+        }
+      };
+      
+      executeWithRetry(createSplitLayout);
+      executeWithRetry(updateNavLabels);
     });
     </script>
 </body>
