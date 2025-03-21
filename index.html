@@ -524,20 +524,6 @@
         const pubContainer = document.createElement('div');
         pubContainer.className = 'publications-container';
         
-        // Directly define fallback publications data
-        const fallbackPublications = [
-          {
-            "title": "Access to care improves EHR reliability and clinical risk prediction model performance",
-            "authors": "Anna Zink, Hongzhou Luan, and Irene Y. Chen",
-            "venue": "ML4H, 2024",
-            "links": {
-              "paper": "https://arxiv.org/abs/2412.07712"
-            },
-            "image": "/upload/paper_thumbnails/2024ML4H.png",
-            "highlighted": true
-          }
-        ];
-        
         // Load publications from config file
         console.log('Attempting to load publications config...');
         
@@ -546,13 +532,9 @@
           '/config/en/publications.config.json',
           'config/en/publications.config.json',
           './config/en/publications.config.json',
+          '/hzluan.github.io/config/en/publications.config.json',
           '../config/en/publications.config.json'
         ];
-        
-        // Add GitHub Pages specific paths if we're on GitHub Pages
-        if (window.location.hostname === 'hzluan.github.io') {
-          possiblePaths.unshift('/hzluan.github.io/config/en/publications.config.json');
-        }
         
         let fetchAttempts = 0;
         let allFailed = true;
@@ -560,10 +542,6 @@
         function tryNextPath() {
           if (fetchAttempts >= possiblePaths.length) {
             console.error('Failed to load publications from all attempted paths, using fallback data');
-            console.error('Hostname:', window.location.hostname);
-            console.error('Full URL:', window.location.href);
-            console.error('All paths tried:', possiblePaths);
-            
             if (allFailed) {
               console.log('Using fallback publications data:', fallbackPublications);
               renderPublications(fallbackPublications);
@@ -576,7 +554,6 @@
           
           fetch(path)
             .then(response => {
-              console.log(`Response from ${path}:`, response.status, response.statusText);
               if (!response.ok) {
                 throw new Error(`Failed to fetch from ${path}: ${response.status} ${response.statusText}`);
               }
@@ -776,7 +753,7 @@
                     <line x1="16" y1="17" x2="8" y2="17"></line>
                     <polyline points="10 9 9 9 8 9"></polyline>
                   </svg>
-                  <span style="margin-top: 8px; font-size: 12px;">${pub.venue || 'Publication'}</span>
+                  <span style="margin-top: 8px; font-size: 12px;">Publication</span>
                 </div>
               `;
               
