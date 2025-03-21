@@ -185,7 +185,8 @@
             align-self: center;
             margin-top: 15px;
             margin-bottom: 5px;
-            width: 200px;
+            width: 300px;
+            max-width: 100%;
             height: auto;
         }
         
@@ -430,149 +431,142 @@
         }
       ];
       
-      // Function to create the Publications section
-      function createPublicationsSection() {
-        // Create the publications section structure
-        const publicationsSection = document.createElement('section');
-        publicationsSection.id = 'publications';
-        publicationsSection.className = 'publications-section spad';
+      // Directly render the publications data
+      renderPublications(publicationsData, container);
+      
+      // Try loading from JSON file (but still use the data we already rendered)
+      const isGitHubPages = window.location.hostname === 'hzluan.github.io';
+      const configPath = isGitHubPages 
+        ? 'https://hzluan.github.io/config/en/publications.config.json'
+        : '/config/en/publications.config.json';
         
-        // Create container
-        const container = document.createElement('div');
-        container.className = 'container';
+      fetch(configPath)
+        .then(response => {
+          if (!response.ok) throw new Error('Failed to fetch');
+          return response.json();
+        })
+        .then(data => {
+          console.log('Publications loaded from file successfully');
+          renderPublications(data, container);
+        })
+        .catch(error => {
+          console.log('Using hardcoded publications data');
+        });
+    }
+    
+    // Function to render publications
+    function renderPublications(publications, container) {
+      container.innerHTML = '';
+      
+      // Sort publications by date (newest first)
+      publications.sort((a, b) => {
+        const dateA = a.date ? new Date(a.date) : new Date(0);
+        const dateB = b.date ? new Date(b.date) : new Date(0);
+        return dateB - dateA;
+      });
+      
+      // Create publication items
+      publications.forEach(pub => {
+        // Create publication item
+        const pubItem = document.createElement('div');
+        pubItem.className = 'publication-item';
         
-        // Create section title
-        const titleDiv = document.createElement('div');
-        titleDiv.className = 'section-title';
-        const title = document.createElement('h2');
-        title.textContent = 'Publications';
-        titleDiv.appendChild(title);
-        container.appendChild(titleDiv);
-        
-        // Create publications container
-        const pubContainer = document.createElement('div');
-        pubContainer.className = 'publications-container';
-        
-        // Load publications from config file
-        fetch('/config/en/publications.config.json')
-          .then(function(response) {
-            return response.json();
-          })
-          .then(function(data) {
-            // Use publications from config file
-            const publications = data.publications || [];
-            console.log('Loaded ' + publications.length + ' publications from config');
-            renderPublications(publications);
-          })
-          .catch(function(error) {
-            console.error('Error loading publications.config.json:', error);
-            // Display error message in console only
-            pubContainer.innerHTML = '<p style="text-align: center; color: #000;">Unable to load publications.</p>';
-          });
-        
-        // Function to render publications from data
-        function renderPublications(publications) {
-          console.log('Rendering publications:', publications);
-          // Clear any existing items
-          pubContainer.innerHTML = '';
-          
-          // Add publication items
-          publications.forEach(function(pub) {
-            // Create clickable container wrapper
-            const pubWrapper = document.createElement('a');
-            // Check for links structure or direct link
-            let linkUrl = '#';
-            if (pub.links && pub.links.paper) {
-              linkUrl = pub.links.paper;
-            } else if (pub.link || pub.paper || pub.url || pub.pdf || pub.code) {
-              linkUrl = pub.link || pub.paper || pub.url || pub.pdf || pub.code;
-            }
-            pubWrapper.href = linkUrl;
-            console.log('Publication link:', pub.title, '->', pubWrapper.href); // Debug log
-            pubWrapper.style.textDecoration = 'none';
-            pubWrapper.style.display = 'block';
-            pubWrapper.target = '_blank'; // Open in new tab
-            
-            const pubItem = document.createElement('div');
-            pubItem.className = 'publication-item';
-            
-            const pubTitle = document.createElement('h3');
-            pubTitle.className = 'pub-title';
-            pubTitle.textContent = pub.title;
-            
-            const pubAuthors = document.createElement('p');
-            pubAuthors.className = 'pub-authors';
-            pubAuthors.innerHTML = highlightAuthor(pub.authors, "Hongzhou Luan");
-            
-            const pubVenue = document.createElement('p');
-            pubVenue.className = 'pub-venue';
-            pubVenue.textContent = pub.venue;
-            
-            pubItem.appendChild(pubTitle);
-            pubItem.appendChild(pubAuthors);
-            pubItem.appendChild(pubVenue);
-            
-            // Add image if available - now after the text
-            if (pub.image) {
-              console.log('Publication has image:', pub.image);
-              const imageContainer = document.createElement('div');
-              imageContainer.className = 'pub-image-container';
-              
-              const img = document.createElement('img');
-              const imgSrc = pub.image.startsWith('/') ? pub.image : '/' + pub.image;
-              console.log('Setting image src to:', imgSrc);
-              img.src = imgSrc;
-              img.alt = pub.title;
-              img.style.maxWidth = '100%';
-              img.style.height = 'auto';
-              img.style.display = 'block';
-              img.onerror = function() {
-                console.error('Failed to load image:', pub.image);
-                // Try alternative path
-                if (!img.src.includes('/upload/')) {
-                  img.src = '/upload/' + pub.image.split('/').pop();
-                }
-              };
-              
-              imageContainer.appendChild(img);
-              pubItem.appendChild(imageContainer);
-            }
-            
-            // Append the publication item to the wrapper
-            pubWrapper.appendChild(pubItem);
-            
-            // Append the wrapper to the container
-            pubContainer.appendChild(pubWrapper);
-          });
-        }
-        
-        // Helper function to highlight author name
-        function highlightAuthor(authors, nameToHighlight) {
-          if (!authors) return '';
-          return authors.replace(
-            new RegExp(nameToHighlight, 'gi'), 
-            '<strong>$&</strong>'
-          );
-        }
-        
-        container.appendChild(pubContainer);
-        publicationsSection.appendChild(container);
-        
-        // Find where to insert the section (after updates, before gallery)
-        const updatesSection = document.querySelector('#updates');
-        const gallerySection = document.querySelector('#gallery');
-        
-        if (updatesSection && updatesSection.nextElementSibling) {
-          updatesSection.parentNode.insertBefore(publicationsSection, updatesSection.nextElementSibling);
-        } else if (gallerySection) {
-          gallerySection.parentNode.insertBefore(publicationsSection, gallerySection);
+        // Create title with link if available
+        const title = document.createElement('h3');
+        title.className = 'pub-title';
+        if (pub.url) {
+          const titleLink = document.createElement('a');
+          titleLink.href = pub.url;
+          titleLink.target = '_blank';
+          titleLink.textContent = pub.title;
+          title.appendChild(titleLink);
         } else {
-          // Fallback - just append to the main content
-          const main = document.querySelector('main') || document.querySelector('#root');
-          if (main) {
-            main.appendChild(publicationsSection);
-          }
+          title.textContent = pub.title;
         }
+        pubItem.appendChild(title);
+        
+        // Add authors
+        if (pub.authors) {
+          const authors = document.createElement('p');
+          authors.className = 'pub-authors';
+          authors.textContent = pub.authors;
+          pubItem.appendChild(authors);
+        }
+        
+        // Add venue
+        if (pub.venue) {
+          const venue = document.createElement('p');
+          venue.className = 'pub-venue';
+          venue.textContent = pub.venue;
+          pubItem.appendChild(venue);
+        }
+        
+        // Add image if available
+        if (pub.image) {
+          const imageContainer = document.createElement('div');
+          imageContainer.className = 'pub-image-container';
+          
+          const img = document.createElement('img');
+          
+          // Simple direct path handling for gallery images
+          const isGitHubPages = window.location.hostname === 'hzluan.github.io';
+          let imgPath = pub.image.startsWith('/') ? pub.image : '/' + pub.image;
+          
+          // Direct absolute URL for GitHub Pages
+          if (isGitHubPages) {
+            img.src = 'https://hzluan.github.io' + imgPath;
+          } else {
+            img.src = imgPath;
+          }
+          
+          img.alt = pub.title;
+          
+          // Simple fallback for image errors
+          img.onerror = function() {
+            img.style.display = 'none';
+            
+            const fallback = document.createElement('div');
+            fallback.style.width = '100%';
+            fallback.style.height = '120px';
+            fallback.style.backgroundColor = '#0066cc';
+            fallback.style.color = 'white';
+            fallback.style.display = 'flex';
+            fallback.style.justifyContent = 'center';
+            fallback.style.alignItems = 'center';
+            fallback.textContent = pub.venue || 'Publication';
+            imageContainer.appendChild(fallback);
+          };
+          
+          imageContainer.appendChild(img);
+          pubItem.appendChild(imageContainer);
+        }
+        
+        // Add to container
+        container.appendChild(pubItem);
+      });
+    }
+    
+    // Particles initialization
+    function initializeParticles() {
+      // Check if particles.js is loaded
+      if (typeof particlesJS === 'undefined') {
+        console.warn('particlesJS not loaded, skipping particles');
+        return;
+      }
+      
+      // Find intro section
+      const introLeft = document.querySelector('.intro-section .intro-left');
+      if (!introLeft) {
+        console.warn('No intro-left found, skipping particles');
+        return;
+      }
+      
+      // Get existing particles container or create one
+      let particlesContainer = document.getElementById('particles-container');
+      if (!particlesContainer) {
+        particlesContainer = document.createElement('div');
+        particlesContainer.id = 'particles-container';
+        introLeft.appendChild(particlesContainer);
       }
       
       // Initialize particles
