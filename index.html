@@ -432,9 +432,20 @@
             }
           }
           
-          // Change "Gallery" to "Photos" and update href to "#gallery"
+          // Add Publications item after Updates and before Photos
           const galleryItem = navBar.children[2].querySelector('a');
           if (galleryItem) {
+            // Create new Publications nav item
+            const publicationsLi = document.createElement('li');
+            const publicationsLink = document.createElement('a');
+            publicationsLink.setAttribute('href', '#publications');
+            publicationsLink.textContent = 'Publications';
+            publicationsLi.appendChild(publicationsLink);
+            
+            // Insert before gallery/photos item
+            navBar.insertBefore(publicationsLi, navBar.children[2]);
+            
+            // Now update the Photos label (which is now at index 3)
             const textNode = Array.from(galleryItem.childNodes).find(node => 
               node.nodeType === Node.TEXT_NODE);
             if (textNode) {
@@ -459,12 +470,204 @@
                 }
               });
             }
+            
+            // Create Publications section if it doesn't exist
+            if (!document.querySelector('#publications')) {
+              createPublicationsSection();
+            }
           }
           
           return true;
         }
         return false;
       };
+      
+      // Function to create the Publications section
+      function createPublicationsSection() {
+        // Create the publications section structure
+        const publicationsSection = document.createElement('section');
+        publicationsSection.id = 'publications';
+        publicationsSection.className = 'publications-section spad';
+        
+        // Create container
+        const container = document.createElement('div');
+        container.className = 'container';
+        
+        // Create section title
+        const titleDiv = document.createElement('div');
+        titleDiv.className = 'section-title';
+        const title = document.createElement('h2');
+        title.textContent = 'Publications';
+        titleDiv.appendChild(title);
+        container.appendChild(titleDiv);
+        
+        // Create publications container
+        const pubContainer = document.createElement('div');
+        pubContainer.className = 'publications-container';
+        
+        // Example publication items
+        const publications = [
+          {
+            title: "Your Paper Title 1",
+            authors: "Your Name, Co-author 1, Co-author 2",
+            venue: "Conference/Journal Name, Year",
+            link: "#",
+            pdf: "#",
+            code: "#"
+          },
+          {
+            title: "Your Paper Title 2",
+            authors: "Your Name, Co-author 3, Co-author 4",
+            venue: "Conference/Journal Name, Year",
+            link: "#",
+            pdf: "#",
+            code: "#"
+          }
+        ];
+        
+        // Add publication items
+        publications.forEach(pub => {
+          const pubItem = document.createElement('div');
+          pubItem.className = 'publication-item';
+          
+          const pubTitle = document.createElement('h3');
+          pubTitle.className = 'pub-title';
+          pubTitle.textContent = pub.title;
+          
+          const pubAuthors = document.createElement('p');
+          pubAuthors.className = 'pub-authors';
+          pubAuthors.textContent = pub.authors;
+          
+          const pubVenue = document.createElement('p');
+          pubVenue.className = 'pub-venue';
+          pubVenue.textContent = pub.venue;
+          
+          const pubLinks = document.createElement('div');
+          pubLinks.className = 'pub-links';
+          
+          if (pub.link) {
+            const linkA = document.createElement('a');
+            linkA.href = pub.link;
+            linkA.textContent = 'Link';
+            linkA.className = 'pub-link';
+            pubLinks.appendChild(linkA);
+          }
+          
+          if (pub.pdf) {
+            const pdfA = document.createElement('a');
+            pdfA.href = pub.pdf;
+            pdfA.textContent = 'PDF';
+            pdfA.className = 'pub-pdf';
+            pubLinks.appendChild(pdfA);
+          }
+          
+          if (pub.code) {
+            const codeA = document.createElement('a');
+            codeA.href = pub.code;
+            codeA.textContent = 'Code';
+            codeA.className = 'pub-code';
+            pubLinks.appendChild(codeA);
+          }
+          
+          pubItem.appendChild(pubTitle);
+          pubItem.appendChild(pubAuthors);
+          pubItem.appendChild(pubVenue);
+          pubItem.appendChild(pubLinks);
+          
+          pubContainer.appendChild(pubItem);
+        });
+        
+        container.appendChild(pubContainer);
+        publicationsSection.appendChild(container);
+        
+        // Find where to insert the section (after updates, before gallery)
+        const updatesSection = document.querySelector('#updates');
+        const gallerySection = document.querySelector('#gallery');
+        
+        if (updatesSection && updatesSection.nextElementSibling) {
+          updatesSection.parentNode.insertBefore(publicationsSection, updatesSection.nextElementSibling);
+        } else if (gallerySection) {
+          gallerySection.parentNode.insertBefore(publicationsSection, gallerySection);
+        } else {
+          // Fallback - just append to the main content
+          const main = document.querySelector('main') || document.querySelector('#root');
+          if (main) {
+            main.appendChild(publicationsSection);
+          }
+        }
+        
+        // Add styles for publications section
+        const style = document.createElement('style');
+        style.textContent = `
+          .publications-section {
+            padding: 60px 0;
+          }
+          
+          .publications-container {
+            margin-top: 40px;
+          }
+          
+          .publication-item {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          }
+          
+          .pub-title {
+            font-size: 22px;
+            margin-bottom: 10px;
+            color: #fff;
+          }
+          
+          .pub-authors {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.8);
+          }
+          
+          .pub-venue {
+            font-style: italic;
+            font-size: 14px;
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, 0.7);
+          }
+          
+          .pub-links {
+            display: flex;
+            gap: 15px;
+          }
+          
+          .pub-links a {
+            display: inline-block;
+            padding: 4px 12px;
+            background-color: rgba(255, 231, 204, 0.1);
+            color: rgb(255, 231, 204);
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s;
+          }
+          
+          .pub-links a:hover {
+            background-color: rgba(255, 231, 204, 0.2);
+          }
+          
+          @media (max-width: 768px) {
+            .publications-section {
+              padding: 40px 15px;
+            }
+            
+            .pub-title {
+              font-size: 18px;
+            }
+            
+            .pub-links {
+              flex-wrap: wrap;
+            }
+          }
+        `;
+        document.head.appendChild(style);
+      }
       
       // Execute both functions with retry
       const executeWithRetry = function(fn, interval) {

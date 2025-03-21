@@ -1,0 +1,21 @@
+{
+  "title": "Publications",
+
+  "publications": [
+    {
+      "title": "Access to care improves EHR reliability and clinical risk prediction model performance.",
+      "authors": "Anna Zink, Hongzhou Luan, and Irene Y. Chen",
+      "venue": "ML4H, 2024",
+      "links": {
+        "paper": "https://arxiv.org/abs/2412.07712"
+      },
+      "image": "/upload/paper_thumbnails/ML4H2024.jpg",
+      "highlighted": true
+    }
+  ],
+  "display_options": {
+    "group_by_year": true,
+    "show_tags": true,
+    "highlight_recent": true
+  }
+}
