@@ -55,6 +55,18 @@
             display: none !important;
         }
         
+        /* Additional fixes to ensure no overlay on the right side */
+        .intro-section::before {
+            content: none !important;
+            display: none !important;
+        }
+        
+        /* Ensure the right column has no filter */
+        .intro-right {
+            filter: none !important;
+            -webkit-filter: none !important;
+        }
+        
         /* Content styling */
         .intro-content {
             position: relative;
