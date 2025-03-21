@@ -1,9 +1,8 @@
 {
     "covers": [
-
         {
             "filter": "uk",
-            "image": "/src/graduation.jpg",
+            "image": "graduation.jpg",
             "location": "Oxford, 2023",
             "position": "col-lg-2 col-md-6",
             "title": "Graduation",
@@ -13,7 +12,7 @@
         },
         {
             "filter": "uk",
-            "image": "/src/Christmas.JPG",
+            "image": "Christmas.JPG",
             "location": "Oxford, 2021",
             "position": "col-lg-4 col-md-6",
             "title": "Christmas dinner",
@@ -23,7 +22,7 @@
         },
         {
             "filter": "uk",
-            "image": "/src/3yp_presentation.png",
+            "image": "3yp_presentation.png",
             "location": "Microsoft Teams, 2021",
             "position": "col-lg-4 col-md-6",
             "title": "3YP Presentation",
@@ -33,7 +32,7 @@
         },
         {
             "filter": "uk",
-            "image": "/src/owens_graduation.JPG",
+            "image": "owens_graduation.JPG",
             "location": "Oxford, 2020",
             "position": "col-lg-2 col-md-6",
             "title": "Attending Owen's Graduation",
@@ -43,7 +42,7 @@
         },
         {
             "filter": "uk",
-            "image": "/src/halfwayhall.jpg",
+            "image": "halfwayhall.jpg",
             "location": "Oxford, 2020",
             "position": "col-lg-6 col-md-6",
             "title": "Halfway Hall",
@@ -80,4 +79,4 @@
     ],
     "title": "My Photo Gallery",
     "display_number": 70
-}
+} 
