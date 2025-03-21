@@ -169,7 +169,8 @@
             align-self: center;
             margin-top: 15px;
             margin-bottom: 5px;
-            width: 200px;
+            width: 300px;
+            max-width: 100%;
             height: auto;
         }
         
@@ -603,6 +604,7 @@
         
         // Function to render publications from data
         function renderPublications(publications) {
+          console.log('Rendering publications:', publications);
           // Clear any existing items
           pubContainer.innerHTML = '';
           
@@ -644,11 +646,14 @@
             
             // Add image if available - now after the text
             if (pub.image) {
+              console.log('Publication has image:', pub.image);
               const imageContainer = document.createElement('div');
               imageContainer.className = 'pub-image-container';
               
               const img = document.createElement('img');
-              img.src = pub.image.startsWith('/') ? pub.image : '/' + pub.image;
+              const imgSrc = pub.image.startsWith('/') ? pub.image : '/' + pub.image;
+              console.log('Setting image src to:', imgSrc);
+              img.src = imgSrc;
               img.alt = pub.title;
               img.style.maxWidth = '100%';
               img.style.height = 'auto';
