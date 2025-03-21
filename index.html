@@ -24,6 +24,50 @@
     <script src="/static/js/runtime-main.c72e126b.js"></script>
     <script src="/static/js/2.ae2b3713.chunk.js"></script>
     <script src="/static/js/main.d1cf4719.chunk.js"></script>
+    
+    <script>
+    // Script to fix the confusing navigation labels
+    document.addEventListener('DOMContentLoaded', function() {
+      // Function to update the navigation labels
+      const updateNavLabels = function() {
+        const navBar = document.querySelector('.nav-bar ul');
+        if (navBar && navBar.children.length >= 4) {
+          // Find the second nav item (index 1) which is "News" -> "Updates"
+          const newsItem = navBar.children[1].querySelector('a');
+          if (newsItem && newsItem.getAttribute('href') === '#resume') {
+            const textNode = Array.from(newsItem.childNodes).find(node => 
+              node.nodeType === Node.TEXT_NODE);
+            if (textNode) {
+              textNode.nodeValue = 'Updates';
+            }
+          }
+          
+          // Find the third nav item (index 2) which is "Gallery" -> "Photos"
+          const galleryItem = navBar.children[2].querySelector('a');
+          if (galleryItem && galleryItem.getAttribute('href') === '#works') {
+            const textNode = Array.from(galleryItem.childNodes).find(node => 
+              node.nodeType === Node.TEXT_NODE);
+            if (textNode) {
+              textNode.nodeValue = 'Photos';
+            }
+          }
+          
+          return true;
+        }
+        return false;
+      };
+      
+      // Try immediately
+      if (!updateNavLabels()) {
+        // Try again after a delay
+        const interval = setInterval(function() {
+          if (updateNavLabels()) {
+            clearInterval(interval);
+          }
+        }, 100);
+      }
+    });
+    </script>
 </body>
 </html>
 
