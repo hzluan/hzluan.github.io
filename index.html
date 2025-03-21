@@ -134,9 +134,10 @@
             }
         }
         
-        /* Add styles for publications section */
+        /* Styles for publications section */
         .publications-section {
             padding: 60px 0;
+            background-color: #f9f9f9;
         }
         
         .publications-container {
@@ -146,27 +147,37 @@
         .publication-item {
             margin-bottom: 30px;
             padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             position: relative;
             cursor: pointer;
             transition: all 0.3s;
-            padding: 15px;
+            padding: 20px;
             border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
         
         .publication-item:hover {
-            background-color: rgba(255, 231, 204, 0.1);
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
         }
         
         .pub-title {
             font-size: 22px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             color: #000;
+            font-weight: bold;
         }
         
         .pub-authors {
             font-size: 16px;
             margin-bottom: 8px;
+            color: #000;
+        }
+        
+        .pub-authors strong {
+            font-weight: bold;
             color: #000;
         }
         
@@ -636,7 +647,7 @@
             
             const pubAuthors = document.createElement('p');
             pubAuthors.className = 'pub-authors';
-            pubAuthors.textContent = pub.authors;
+            pubAuthors.innerHTML = highlightAuthor(pub.authors, "Hongzhou Luan");
             
             const pubVenue = document.createElement('p');
             pubVenue.className = 'pub-venue';
@@ -652,6 +663,15 @@
             // Append the wrapper to the container
             pubContainer.appendChild(pubWrapper);
           });
+        }
+        
+        // Helper function to highlight author name
+        function highlightAuthor(authors, nameToHighlight) {
+          if (!authors) return '';
+          return authors.replace(
+            new RegExp(nameToHighlight, 'gi'), 
+            '<strong>$&</strong>'
+          );
         }
         
         container.appendChild(pubContainer);
