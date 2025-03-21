@@ -8,7 +8,13 @@
     <meta name="description" content="Hongzhou Luan's personal website" />
     <link rel="apple-touch-icon" href="/logo192.png" />
     <link rel="manifest" href="/manifest.json" />
-    <title>Hongzhou Luan</title>
+    <title>Hongzhou Luan | Computer Vision Researcher</title>
+    <script>
+      // Early redirect for #works links
+      if (window.location.hash === '#works') {
+        window.location.hash = '#gallery';
+      }
+    </script>
     <link href="/static/css/main.3f09121e.chunk.css" rel="stylesheet">
     <style>
         /* Hide language switcher */
@@ -235,13 +241,22 @@
             }
           }
           
-          // Change "Gallery" to "Photos"
+          // Change "Gallery" to "Photos" and href from "#works" to "#gallery"
           const galleryItem = navBar.children[2].querySelector('a');
           if (galleryItem && galleryItem.getAttribute('href') === '#works') {
             const textNode = Array.from(galleryItem.childNodes).find(node => 
               node.nodeType === Node.TEXT_NODE);
             if (textNode) {
               textNode.nodeValue = 'Photos';
+            }
+            
+            // Update the href attribute
+            galleryItem.setAttribute('href', '#gallery');
+            
+            // Also update the gallery section ID to match the new link
+            const gallerySection = document.querySelector('#works');
+            if (gallerySection) {
+              gallerySection.id = 'gallery';
             }
           }
           
@@ -261,8 +276,25 @@
         }
       };
       
+      // Additional function to update any #works links in the content
+      const updateAllWorksLinks = function() {
+        // Update all links pointing to #works
+        document.querySelectorAll('a[href="#works"]').forEach(link => {
+          link.setAttribute('href', '#gallery');
+        });
+        
+        // Update all references to works in IDs
+        const worksElement = document.getElementById('works');
+        if (worksElement) {
+          worksElement.id = 'gallery';
+        }
+        
+        return true;
+      };
+      
       executeWithRetry(createSplitLayout);
       executeWithRetry(updateNavLabels);
+      executeWithRetry(updateAllWorksLinks);
     });
     </script>
 </body>
