@@ -12,16 +12,6 @@
             "id": "graduation"
         },
         {
-            "filter": "cn",
-            "image": "xiangshan.jpg",
-            "location": "Beijing, 2023",
-            "position": "col-lg-4 col-md-6",
-            "title": "Xiangshan",
-            "description": "",
-            "link": "",
-            "id": "xiangshan"
-        },
-        {
             "filter": "uk",
             "image": "2021christmas.jpg",
             "location": "Oxford, 2021",
