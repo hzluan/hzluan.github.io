@@ -524,32 +524,50 @@
         const pubContainer = document.createElement('div');
         pubContainer.className = 'publications-container';
         
+        // Directly define fallback publications data
+        const fallbackPublications = [
+          {
+            "title": "Access to care improves EHR reliability and clinical risk prediction model performance",
+            "authors": "Anna Zink, Hongzhou Luan, and Irene Y. Chen",
+            "venue": "ML4H, 2024",
+            "links": {
+              "paper": "https://arxiv.org/abs/2412.07712"
+            },
+            "image": "/upload/paper_thumbnails/2024ML4H.png",
+            "highlighted": true
+          }
+        ];
+        
         // Load publications from config file
         console.log('Attempting to load publications config...');
         
         // Try multiple possible locations for the publications.config.json file
         const possiblePaths = [
-          './config/en/publications.config.json',  // Relative path (most reliable)
-          '/config/en/publications.config.json',   // Absolute path
-          'config/en/publications.config.json'     // Alternative relative path
+          '/config/en/publications.config.json',
+          'config/en/publications.config.json',
+          './config/en/publications.config.json',
+          '../config/en/publications.config.json'
         ];
         
-        // Add GitHub Pages specific path if we're on GitHub Pages
+        // Add GitHub Pages specific paths if we're on GitHub Pages
         if (window.location.hostname === 'hzluan.github.io') {
           possiblePaths.unshift('/hzluan.github.io/config/en/publications.config.json');
         }
         
         let fetchAttempts = 0;
+        let allFailed = true;
         
         function tryNextPath() {
           if (fetchAttempts >= possiblePaths.length) {
-            console.error('Failed to load publications from all attempted paths');
+            console.error('Failed to load publications from all attempted paths, using fallback data');
             console.error('Hostname:', window.location.hostname);
             console.error('Full URL:', window.location.href);
             console.error('All paths tried:', possiblePaths);
             
-            // Display error to user
-            pubContainer.innerHTML = '<p style="text-align: center; color: #666; margin: 30px 0;">Unable to load publications. Please check back later.</p>';
+            if (allFailed) {
+              console.log('Using fallback publications data:', fallbackPublications);
+              renderPublications(fallbackPublications);
+            }
             return;
           }
           
@@ -567,19 +585,15 @@
             })
             .then(data => {
               // Use publications from config file
-              if (!data || !data.publications || !Array.isArray(data.publications)) {
+              if (!data || !data.publications || !Array.isArray(data.publications) || data.publications.length === 0) {
                 console.error(`No valid publications data in response from ${path}`, data);
                 throw new Error('Invalid publications data structure');
               }
               
               const publications = data.publications;
-              console.log(`Successfully loaded ${publications.length} publications from ${path}`);
-              
-              if (publications.length === 0) {
-                pubContainer.innerHTML = '<p style="text-align: center; color: #666; margin: 30px 0;">No publications to display at this time.</p>';
-              } else {
-                renderPublications(publications);
-              }
+              console.log(`Successfully loaded ${publications.length} publications from ${path}:`, publications);
+              renderPublications(publications);
+              allFailed = false;
             })
             .catch(error => {
               console.error(`Error loading from ${path}:`, error);
