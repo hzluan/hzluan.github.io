@@ -316,21 +316,10 @@
     
     // Function to load publications
     function loadPublications() {
-      // Try to find existing container
-      let pubContainer = document.getElementById('publications-container');
-      
-      // If no container exists, we need to create the entire publications section
+      const pubContainer = document.getElementById('publications-container');
       if (!pubContainer) {
-        console.log('Publications container not found, creating one');
-        
-        // Find where to insert the publications section
-        // Look for specific elements in a specific order
-        const mainContent = document.querySelector('.page-content') || 
-                           document.querySelector('main') || 
-                           document.getElementById('root') || 
-                           document.body;
-        
-        // Create publications section
+        // If publications container doesn't exist, create it
+        const main = document.querySelector('main') || document.body;
         const pubSection = document.createElement('section');
         pubSection.className = 'publications-section';
         pubSection.innerHTML = `
@@ -338,41 +327,21 @@
             <div class="section-title">
               <h2>Publications</h2>
             </div>
-            <div id="publications-container" class="publications-container"></div>
+            <div id="publications-container"></div>
           </div>
         `;
+        main.appendChild(pubSection);
         
-        // Insert at appropriate position: after about or before contact
-        const aboutSection = document.querySelector('.about-section');
-        const contactSection = document.querySelector('.contact-section');
+        // Get the newly created container
+        const newPubContainer = document.getElementById('publications-container');
+        if (!newPubContainer) return;
         
-        if (aboutSection && aboutSection.nextElementSibling) {
-          console.log('Inserting publications after about section');
-          mainContent.insertBefore(pubSection, aboutSection.nextElementSibling);
-        } else if (contactSection) {
-          console.log('Inserting publications before contact section');
-          mainContent.insertBefore(pubSection, contactSection);
-        } else {
-          console.log('Appending publications to main content');
-          // Just append it to the main content
-          mainContent.appendChild(pubSection);
-        }
-        
-        // Now get the newly created container
-        pubContainer = document.getElementById('publications-container');
+        newPubContainer.innerHTML = '<div class="loading">Loading publications...</div>';
+        fetchPublications(newPubContainer);
+      } else {
+        pubContainer.innerHTML = '<div class="loading">Loading publications...</div>';
+        fetchPublications(pubContainer);
       }
-      
-      // If we still don't have a container, something is wrong with the DOM
-      if (!pubContainer) {
-        console.error('Failed to create or find publications container');
-        return;
-      }
-      
-      // Show loading indicator
-      pubContainer.innerHTML = '<div class="loading">Loading publications...</div>';
-      
-      // Begin loading publications
-      fetchPublications(pubContainer);
     }
     
     // Function to fetch publications
