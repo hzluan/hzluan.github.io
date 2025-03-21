@@ -10,8 +10,8 @@
     <link rel="manifest" href="/manifest.json" />
     <title>Hongzhou Luan | Computer Vision Researcher</title>
     <script>
-      // Early redirect for #works links
-      if (window.location.hash === '#works') {
+      // Early redirect for old links
+      if (window.location.hash === '#gallery' || window.location.hash.indexOf('gall') !== -1) {
         window.location.hash = '#gallery';
       }
     </script>
@@ -253,9 +253,9 @@
             }
           }
           
-          // Change "Gallery" to "Photos" and href from "#works" to "#gallery"
+          // Change "Gallery" to "Photos" and update href to "#gallery"
           const galleryItem = navBar.children[2].querySelector('a');
-          if (galleryItem && galleryItem.getAttribute('href') === '#works') {
+          if (galleryItem) {
             const textNode = Array.from(galleryItem.childNodes).find(node => 
               node.nodeType === Node.TEXT_NODE);
             if (textNode) {
@@ -265,10 +265,20 @@
             // Update the href attribute
             galleryItem.setAttribute('href', '#gallery');
             
-            // Also update the gallery section ID to match the new link
-            const gallerySection = document.querySelector('#works');
+            // Also update any potential section IDs
+            const gallerySection = document.querySelector('#gallery');
             if (gallerySection) {
               gallerySection.id = 'gallery';
+            } else {
+              // Look for potential old sections that need to be updated
+              const oldSections = document.querySelectorAll('section');
+              oldSections.forEach(section => {
+                if (section.id && section.id !== 'gallery' && 
+                    (section.classList.contains('portfolio-section') || 
+                     section.querySelector('.portfolio-item'))) {
+                  section.id = 'gallery';
+                }
+              });
             }
           }
           
@@ -288,25 +298,31 @@
         }
       };
       
-      // Additional function to update any #works links in the content
-      const updateAllWorksLinks = function() {
-        // Update all links pointing to #works
-        document.querySelectorAll('a[href="#works"]').forEach(link => {
-          link.setAttribute('href', '#gallery');
+      // Additional function to update any old links in the content
+      const updateAllGalleryLinks = function() {
+        // Update all links pointing to old references
+        document.querySelectorAll('a[href^="#"]').forEach(link => {
+          const href = link.getAttribute('href');
+          if (href && href !== '#gallery' && 
+              (href.includes('gall') || 
+               link.textContent.toLowerCase().includes('photo') || 
+               link.textContent.toLowerCase().includes('gall'))) {
+            link.setAttribute('href', '#gallery');
+          }
         });
         
-        // Update all references to works in IDs
-        const worksElement = document.getElementById('works');
-        if (worksElement) {
-          worksElement.id = 'gallery';
-        }
+        // Update section ID if it exists using class-based targeting
+        const portfolioSections = document.querySelectorAll('.portfolio-section');
+        portfolioSections.forEach(section => {
+          section.id = 'gallery';
+        });
         
         return true;
       };
       
       executeWithRetry(createSplitLayout);
       executeWithRetry(updateNavLabels);
-      executeWithRetry(updateAllWorksLinks);
+      executeWithRetry(updateAllGalleryLinks);
     });
     </script>
 </body>
