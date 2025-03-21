@@ -48,14 +48,6 @@
             -webkit-filter: none !important;
         }
         
-        /* GitHub Pages specific style */
-        @media (min-width: 1px) {
-            /* This media query will always match, but CSS comes after the default rule above */
-            .intro-right-gh-pages {
-                background-image: url('/hzluan.github.io/upload/Hongzhou_bg.jpg') !important;
-            }
-        }
-        
         /* Remove ALL overlays */
         .intro-right::before,
         .intro-right::after,
@@ -294,20 +286,6 @@
     document.addEventListener('DOMContentLoaded', function() {
       console.log('DOM loaded, initializing site');
       
-      // First thing: fix background image paths based on hostname
-      const isGitHubPages = window.location.hostname === 'hzluan.github.io';
-      
-      // Add inline styles to head immediately
-      if (isGitHubPages) {
-        const style = document.createElement('style');
-        style.textContent = `
-          .intro-right {
-            background-image: url('/hzluan.github.io/upload/Hongzhou_bg.jpg') !important;
-          }
-        `;
-        document.head.appendChild(style);
-      }
-      
       // Initialize particles
       initializeParticles();
       
@@ -329,19 +307,13 @@
       if (introRight) {
         const isGitHubPages = window.location.hostname === 'hzluan.github.io';
         if (isGitHubPages) {
-          // Add GitHub Pages specific class
-          introRight.classList.add('intro-right-gh-pages');
-          
-          // Also apply the style directly as a backup
+          // Update path for GitHub Pages
           introRight.style.backgroundImage = 'url("/hzluan.github.io/upload/Hongzhou_bg.jpg")';
-          
-          // Force a repaint
-          introRight.style.display = 'none';
-          setTimeout(() => {
-            introRight.style.display = '';
-          }, 10);
-          
           console.log('Updated intro-right background for GitHub Pages');
+        } else {
+          // Ensure path is correct for local development
+          introRight.style.backgroundImage = 'url("/upload/Hongzhou_bg.jpg")';
+          console.log('Updated intro-right background for local development');
         }
       }
       
