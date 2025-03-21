@@ -33,6 +33,7 @@
             justify-content: center;
             padding: 40px;
             box-sizing: border-box;
+            overflow: hidden; /* Keep particles contained */
         }
         
         .intro-right {
@@ -62,6 +63,17 @@
             right: 0;
             bottom: 0;
             z-index: 1;
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* Canvas styling for particles */
+        canvas.particles-js-canvas-el {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
         }
         
         /* Mobile responsiveness */
@@ -135,13 +147,41 @@
           introSection.appendChild(leftColumn);
           introSection.appendChild(rightColumn);
           
-          // Move particles canvas into our container
-          setTimeout(function() {
+          // Handle the particles canvas
+          const checkAndMoveParticles = function() {
             const particlesCanvas = document.querySelector('canvas.particles-js-canvas-el');
             if (particlesCanvas) {
-              particlesContainer.appendChild(particlesCanvas);
+              // Clone the canvas to break any existing connections
+              const newCanvas = particlesCanvas.cloneNode(true);
+              // Style the new canvas
+              newCanvas.style.position = 'absolute';
+              newCanvas.style.top = '0';
+              newCanvas.style.left = '0';
+              newCanvas.style.width = '100%';
+              newCanvas.style.height = '100%';
+              
+              // Add it to our container
+              particlesContainer.appendChild(newCanvas);
+              
+              // Hide the original canvas
+              particlesCanvas.style.display = 'none';
+              
+              return true;
             }
-          }, 500);
+            return false;
+          };
+          
+          // Try to move the particles canvas immediately
+          if (!checkAndMoveParticles()) {
+            // If not found immediately, try again after a delay
+            let attempts = 0;
+            const particlesInterval = setInterval(function() {
+              if (checkAndMoveParticles() || attempts > 20) {
+                clearInterval(particlesInterval);
+              }
+              attempts++;
+            }, 200);
+          }
           
           return true;
         }
