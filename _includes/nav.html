@@ -1,0 +1,12 @@
+<nav>
+    <div class="nav-container">
+        <a href="{{ '/' | relative_url }}" class="nav-name">Hongzhou Luan</a>
+        <div class="nav-links">
+            <a href="{{ '/' | relative_url }}" {% if page.url == '/' %}class="active"{% endif %}>Home</a>
+            <a href="{{ '/blog/' | relative_url }}" {% if page.url contains '/blog' %}class="active"{% endif %}>Blog</a>
+            <a href="{{ '/#publications' }}">Publications</a>
+            <a href="{{ '/#projects' }}">Projects</a>
+            <a href="{{ '/assets/Hongzhou_Luan_cv_2025.pdf' | relative_url }}" class="cv-link" target="_blank">CV</a>
+        </div>
+    </div>
+</nav>

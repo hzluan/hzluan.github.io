@@ -1,0 +1,35 @@
+---
+layout: default
+extra_css:
+  - /assets/css/blog.css
+---
+
+<a href="{{ '/blog/' | relative_url }}" class="back-to-blog">&larr; Back to blog</a>
+
+<article>
+    <div class="post-header">
+        <h1 class="post-title">{{ page.title }}</h1>
+        <div class="post-meta">
+            <time datetime="{{ page.date | date_to_xmlschema }}">
+                {{ page.date | date: "%B %-d, %Y" }}
+            </time>
+        </div>
+    </div>
+
+    <div class="post-content">
+        {{ content }}
+    </div>
+</article>
+
+<nav class="post-nav">
+    {% if page.previous.url %}
+        <a href="{{ page.previous.url | relative_url }}">&larr; {{ page.previous.title }}</a>
+    {% else %}
+        <span></span>
+    {% endif %}
+    {% if page.next.url %}
+        <a href="{{ page.next.url | relative_url }}">{{ page.next.title }} &rarr;</a>
+    {% else %}
+        <span></span>
+    {% endif %}
+</nav>

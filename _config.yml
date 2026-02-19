@@ -1,0 +1,42 @@
+# Site settings
+title: Hongzhou Luan
+description: "PhD Candidate, UC Berkeley - UCSF. Research on AI for healthcare equity."
+url: "https://www.hongzhouluan.com"
+baseurl: ""
+
+# Build settings
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+# Plugins (supported by GitHub Pages)
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+# Blog post permalink structure
+permalink: /blog/:year/:month/:day/:title/
+
+# Layout defaults
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+  - scope:
+      path: ""
+    values:
+      layout: "default"
+
+# Feed configuration
+feed:
+  path: "/feed.xml"
+
+# Exclude from build
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - .claude
