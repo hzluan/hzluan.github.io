@@ -286,6 +286,9 @@ h2 {
 .publication-authors .me {
     font-weight: 500;
     color: var(--color-text);
+    text-decoration: underline;
+    text-decoration-color: var(--color-border);
+    text-underline-offset: 3px;
 }
 
 .publication-venue {
